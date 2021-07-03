@@ -8,88 +8,110 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:DuckyProfileSwitcher.Models"
     Title="duckyPad Profile Switcher"
-    Width="800"
+    Width="700"
     Height="450"
+    Background="{DynamicResource WindowBackground}"
     Closing="Window_Closing"
+    Foreground="{DynamicResource WindowForeground}"
     Icon="/Resources/small.ico"
+    ResizeMode="CanResize"
+    WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
-    <Window.Resources />
-
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="1" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="1" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <StackPanel Margin="10">
-            <controls:StatusHeader
-                TextFalse="duckyPad not found."
-                TextTrue="duckyPad connected."
-                Value="{Binding IsConnected}" />
-            <Label
-                Margin="22,0,0,0"
-                Padding="0"
-                Content="{Binding DuckyPadDetails}" />
-            <controls:StatusHeader
-                Margin="0,5,0,0"
-                TextFalse="duckyPad Profile Switcher is not running."
-                TextTrue="duckyPad Profile Switcher is running."
-                Value="True" />
-        </StackPanel>
-        <Rectangle
-            Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Fill="{DynamicResource DividerFill}" />
-        <WrapPanel Grid.Row="2" Margin="10,10,0,0">
-            <WrapPanel.Resources>
-                <Style BasedOn="{StaticResource ButtonStyle}" TargetType="{x:Type Button}">
-                    <Setter Property="Margin" Value="0,0,10,10" />
-                </Style>
-            </WrapPanel.Resources>
+        <Image
+            Width="400"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Source="/Resources/banner.png">
+            <Image.OpacityMask>
+                <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                    <GradientStop Offset="1" />
+                    <GradientStop Offset="0.75" Color="#07FFFFFF" />
+                    <GradientStop Color="#26FFFFFF" />
+                </LinearGradientBrush>
+            </Image.OpacityMask>
+        </Image>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <StackPanel Margin="10">
+                <controls:StatusHeader
+                    TextFalse="duckyPad not found."
+                    TextTrue="duckyPad connected."
+                    Value="{Binding IsConnected}" />
+                <Label
+                    Margin="22,0,0,0"
+                    Padding="0"
+                    Content="{Binding DuckyPadDetails}" />
+                <controls:StatusHeader
+                    Margin="0,5,0,0"
+                    TextFalse="duckyPad Profile Switcher is not monitoring for switching conditions."
+                    TextTrue="duckyPad Profile Switcher is running and monitoring for switching conditions."
+                    Value="{Binding IsRunning}" />
+            </StackPanel>
+            <Rectangle
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="{DynamicResource DividerFill}" />
+            <WrapPanel Grid.Row="2" Margin="10,10,0,0">
+                <WrapPanel.Resources>
+                    <Style BasedOn="{StaticResource ButtonStyle}" TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="0,0,10,10" />
+                    </Style>
+                </WrapPanel.Resources>
+                <CheckBox
+                    Margin="0,0,10,10"
+                    VerticalAlignment="Center"
+                    Content="Running"
+                    IsChecked="{Binding IsRunning}" />
+                <Button
+                    x:Name="previousProfileButton"
+                    Click="PreviousProfileButton_Click"
+                    Content="Previous profile"
+                    IsEnabled="{Binding IsConnected}" />
+                <Button
+                    x:Name="nextProfileButton"
+                    Click="NextProfileButton_Click"
+                    Content="Next profile"
+                    IsEnabled="{Binding IsConnected}" />
+                <ComboBox
+                    Width="100"
+                    Margin="0,0,10,10"
+                    IsEnabled="{Binding IsConnected}"
+                    ItemsSource="{Binding Profiles}"
+                    SelectedItem="{Binding SelectedProfile, Mode=OneWay}"
+                    SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:DuckyPadProfile}">
+                            <TextBlock Text="{Binding DisplayText}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button
+                    x:Name="exitApplication"
+                    Click="ExitApplication_Click"
+                    Content="Exit app" />
+            </WrapPanel>
+            <Rectangle
+                Grid.Row="3"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Fill="{DynamicResource DividerFill}" />
             <Button
-                x:Name="previousProfileButton"
-                Click="PreviousProfileButton_Click"
-                Content="Previous profile"
-                IsEnabled="{Binding IsConnected}" />
-            <Button
-                x:Name="nextProfileButton"
-                Click="NextProfileButton_Click"
-                Content="Next profile"
-                IsEnabled="{Binding IsConnected}" />
-            <ComboBox
-                Width="100"
-                Margin="0,0,10,10"
-                IsEnabled="{Binding IsConnected}"
-                ItemsSource="{Binding Profiles}"
-                SelectedItem="{Binding SelectedProfile, Mode=OneWay}"
-                SelectionChanged="ComboBox_SelectionChanged">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type models:DuckyPadProfile}">
-                        <TextBlock Text="{Binding DisplayText}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button
-                x:Name="exitApplication"
-                Click="ExitApplication_Click"
-                Content="Exit app" />
-        </WrapPanel>
-        <Rectangle
-            Grid.Row="3"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            Fill="{DynamicResource DividerFill}" />
-        <Button
-            Grid.Row="4"
-            Width="0"
-            Margin="859,195,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Button" />
+                Grid.Row="4"
+                Width="0"
+                Margin="859,195,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Content="Button" />
 
+        </Grid>
     </Grid>
 </Window>

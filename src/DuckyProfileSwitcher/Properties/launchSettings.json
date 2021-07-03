@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DuckyProfileSwitcher": {
+      "commandName": "Project",
+      "commandLineArgs": "run"
+    }
+  }
+}

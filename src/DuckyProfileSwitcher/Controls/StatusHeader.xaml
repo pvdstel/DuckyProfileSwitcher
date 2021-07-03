@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DuckyProfileSwitcher.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Height="24"
     d:DesignWidth="800"
     Initialized="UserControl_Initialized"
     Loaded="UserControl_Loaded"
@@ -23,14 +22,15 @@
             x:Name="dot"
             Width="12"
             Height="12"
-            Margin="0,3,10,0"
-            VerticalAlignment="Center"
+            Margin="0,7,10,0"
+            VerticalAlignment="Top"
             Fill="{DynamicResource StatusHeaderDisabledBrush}" />
         <TextBlock
             x:Name="label"
             Grid.Column="1"
             VerticalAlignment="Center"
             FontSize="18"
-            Text="Status header" />
+            Text="Status header"
+            TextWrapping="Wrap" />
     </Grid>
 </UserControl>

@@ -10,12 +10,14 @@ namespace DuckyProfileSwitcher.ViewModels
     public class MainWindowViewModel : ViewModelBase, IDisposable
     {
         private const int PollingDelayMS = 1000;
+        private const int InfoRetrievalCount = 5;
 
         private bool disposedValue;
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly CancellationToken token;
 
         private bool isConnected;
+        private bool isRunning;
         private string duckyPadDetails = "(disconnected)";
         private ObservableCollection<DuckyPadProfile> profiles = new();
         private DuckyPadProfile? selectedProfile;
@@ -23,6 +25,10 @@ namespace DuckyProfileSwitcher.ViewModels
         public MainWindowViewModel()
         {
             token = cancellationTokenSource.Token;
+            if (Environment.GetCommandLineArgs().Any(a => string.Compare("run", a, true) == 0))
+            {
+                IsRunning = true;
+            }
             PollConnected();
         }
 
@@ -42,6 +48,16 @@ namespace DuckyProfileSwitcher.ViewModels
                         OnDisconnected();
                     }
                 }
+            }
+        }
+
+        public bool IsRunning
+        {
+            get => isRunning;
+            set
+            {
+                isRunning = value;
+                OnPropertyChanged();
             }
         }
 
@@ -105,10 +121,17 @@ namespace DuckyProfileSwitcher.ViewModels
 
         private async void PollConnected()
         {
+            int i = 0;
             while (!token.IsCancellationRequested)
             {
                 IsConnected = await HID.DuckyPadCommunication.IsConnected(cancellationTokenSource.Token);
                 await Task.Delay(PollingDelayMS);
+                ++i;
+                if (i >= InfoRetrievalCount)
+                {
+                    i = 0;
+                    RefreshInfo();
+                }
             }
         }
 

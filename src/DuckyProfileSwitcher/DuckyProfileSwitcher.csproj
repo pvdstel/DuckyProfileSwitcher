@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\banner.png" />
     <None Remove="Resources\small.ico" />
     <None Remove="Resources\small.png" />
   </ItemGroup>
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\banner.png" />
     <Resource Include="Resources\small.ico" />
     <Resource Include="Resources\small.png" />
   </ItemGroup>

@@ -16,7 +16,7 @@ namespace DuckyProfileSwitcher.HID
         private const uint ProductID = 0xD11C; // 53532
         private const ushort CountedBufferUsage = 0x3a;
         private const byte DirectoryFlag = 0x01;
-        private const int ProcessingDelayMS = 500;
+        private const int ProcessingDelayMS = 300;
 
         private static readonly SemaphoreSlim semaphoreSlim = new(1, 1);
 

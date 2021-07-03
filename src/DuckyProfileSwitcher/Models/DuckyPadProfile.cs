@@ -13,5 +13,10 @@
         public string Name { get; set; }
 
         public string DisplayText => $"{Number} - {Name}";
+
+        public override string ToString()
+        {
+            return DisplayText;
+        }
     }
 }
