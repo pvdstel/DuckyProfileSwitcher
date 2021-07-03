@@ -10,11 +10,12 @@ namespace DuckyProfileSwitcher.ViewModels
     public class MainWindowViewModel : ViewModelBase, IDisposable
     {
         private const int PollingDelayMS = 1000;
+        private const int ActionCancellationTimeMS = 10000;
         private const int InfoRetrievalCount = 5;
-
+        private const int ProfileRetrievalCount = 30;
         private bool disposedValue;
         private readonly CancellationTokenSource cancellationTokenSource = new();
-        private readonly CancellationToken token;
+        private readonly CancellationToken viewModelLifetimeToken;
 
         private bool isConnected;
         private bool isRunning;
@@ -24,13 +25,15 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public MainWindowViewModel()
         {
-            token = cancellationTokenSource.Token;
+            viewModelLifetimeToken = cancellationTokenSource.Token;
             if (Environment.GetCommandLineArgs().Any(a => string.Compare("run", a, true) == 0))
             {
                 IsRunning = true;
             }
             PollConnected();
         }
+
+        public event EventHandler? Timeout;
 
         public bool IsConnected
         {
@@ -93,43 +96,67 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public async void PreviousProfile()
         {
-            try
+            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+            await RunCatchDuckyPadException(async () =>
             {
-                await HID.DuckyPadCommunication.PreviousProfile(token);
+                await HID.DuckyPadCommunication.PreviousProfile(ltct.Token);
                 RefreshInfo();
-            }
-            catch (Exception) { }
+            });
         }
 
         public async void NextProfile()
         {
-            try
+            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+            await RunCatchDuckyPadException(async () =>
             {
-                await HID.DuckyPadCommunication.NextProfile(token);
+                await HID.DuckyPadCommunication.NextProfile(ltct.Token);
                 RefreshInfo();
-            }
-            catch (Exception) { }
+            });
         }
 
         public async void SetProfile(DuckyPadProfile profile)
         {
+            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
             if (IsConnected && profile != selectedProfile)
             {
-                await HID.DuckyPadCommunication.GotoProfile(profile.Number, token);
+                await RunCatchDuckyPadException(async () =>
+                {
+                    await HID.DuckyPadCommunication.GotoProfile(profile.Number, ltct.Token);
+                });
+            }
+        }
+
+        private async Task RunCatchDuckyPadException(Func<Task> task)
+        {
+            try
+            {
+                await task();
+            }
+            catch (HID.DuckyPadException dpex)
+            {
+                System.Diagnostics.Debug.WriteLine(dpex);
+            }
+            catch (OperationCanceledException)
+            {
+                Timeout?.Invoke(this, new EventArgs());
             }
         }
 
         private async void PollConnected()
         {
             int i = 0;
-            while (!token.IsCancellationRequested)
+            while (!viewModelLifetimeToken.IsCancellationRequested)
             {
                 IsConnected = await HID.DuckyPadCommunication.IsConnected(cancellationTokenSource.Token);
                 await Task.Delay(PollingDelayMS);
                 ++i;
-                if (i >= InfoRetrievalCount)
+                if (i >= ProfileRetrievalCount)
                 {
                     i = 0;
+                    RefreshProfiles();
+                }
+                else if (i % InfoRetrievalCount == 0)
+                {
                     RefreshInfo();
                 }
             }
@@ -139,9 +166,13 @@ namespace DuckyProfileSwitcher.ViewModels
         {
             if (IsConnected)
             {
-                var info = await HID.DuckyPadCommunication.GetDuckyPadInfo(token);
-                DuckyPadDetails = $"Firmware: {info.Major}.{info.Minor}.{info.Patch} | Model: {info.Model} | Serial: {info.SerialNumber:X}";
-                SelectedProfile = profiles.FirstOrDefault(p => p.Number == info.Profile);
+                using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+                await RunCatchDuckyPadException(async () =>
+                {
+                    var info = await HID.DuckyPadCommunication.GetDuckyPadInfo(ltct.Token);
+                    DuckyPadDetails = $"Firmware: {info.Major}.{info.Minor}.{info.Patch} | Model: {info.Model} | Serial: {info.SerialNumber:X}";
+                    SelectedProfile = profiles.FirstOrDefault(p => p.Number == info.Profile);
+                });
             }
             else
             {
@@ -153,18 +184,22 @@ namespace DuckyProfileSwitcher.ViewModels
         {
             if (IsConnected)
             {
-                var r = await HID.DuckyPadCommunication.ListFiles(cancellationToken: token);
-                var nextProfiles = r.Where(f => f.type == HID.DuckyPadFileType.Directory)
-                    .Where(f => f.name.StartsWith("profile"))
-                    .Select(f =>
-                    {
-                        string relevantName = f.name.Substring(7);
-                        string[] numberAndText = relevantName.Split('_');
-                        return new DuckyPadProfile(byte.Parse(numberAndText[0]), numberAndText[1]);
-                    })
-                    .OrderBy(p => p.Number);
-                Profiles = new(nextProfiles);
-                RefreshInfo();
+                using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+                await RunCatchDuckyPadException(async () =>
+                {
+                    var r = await HID.DuckyPadCommunication.ListFiles(ltct.Token);
+                    var nextProfiles = r.Where(f => f.type == HID.DuckyPadFileType.Directory)
+                        .Where(f => f.name.StartsWith("profile"))
+                        .Select(f =>
+                        {
+                            string relevantName = f.name.Substring(7);
+                            string[] numberAndText = relevantName.Split('_');
+                            return new DuckyPadProfile(byte.Parse(numberAndText[0]), numberAndText[1]);
+                        })
+                        .OrderBy(p => p.Number);
+                    Profiles = new(nextProfiles);
+                    RefreshInfo();
+                });
             }
         }
 

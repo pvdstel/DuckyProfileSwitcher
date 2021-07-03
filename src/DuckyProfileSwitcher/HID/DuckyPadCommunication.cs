@@ -37,7 +37,7 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
                 DuckyPadMessage message = new(0, DuckyPadCommand.Info);
                 var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
                 var result = new DuckyPadInfo(response.Payload[0],
@@ -58,7 +58,7 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
                 DuckyPadMessage message = new(0, DuckyPadCommand.Goto);
                 message.Payload[0] = profile;
                 var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
@@ -75,7 +75,7 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
                 DuckyPadMessage message = new(0, DuckyPadCommand.PreviousProfile);
                 var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
                 await Task.Delay(ProcessingDelayMS).ConfigureAwait(false);
@@ -91,7 +91,7 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
                 DuckyPadMessage message = new(0, DuckyPadCommand.NextProfile);
                 var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
                 await Task.Delay(ProcessingDelayMS).ConfigureAwait(false);
@@ -107,7 +107,7 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
                 DuckyPadMessage message = new(0, DuckyPadCommand.ListFiles);
                 if (!string.IsNullOrEmpty(rootDir))
                 {

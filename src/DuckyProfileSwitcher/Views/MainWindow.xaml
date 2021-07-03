@@ -10,9 +10,7 @@
     Title="duckyPad Profile Switcher"
     Width="700"
     Height="450"
-    Background="{DynamicResource WindowBackground}"
     Closing="Window_Closing"
-    Foreground="{DynamicResource WindowForeground}"
     Icon="/Resources/small.ico"
     ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
@@ -23,15 +21,8 @@
             Width="400"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
-            Source="/Resources/banner.png">
-            <Image.OpacityMask>
-                <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
-                    <GradientStop Offset="1" />
-                    <GradientStop Offset="0.75" Color="#07FFFFFF" />
-                    <GradientStop Color="#26FFFFFF" />
-                </LinearGradientBrush>
-            </Image.OpacityMask>
-        </Image>
+            Opacity="0.15"
+            Source="/Resources/banner.png" />
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
