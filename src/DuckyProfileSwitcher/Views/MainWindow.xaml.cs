@@ -36,11 +36,18 @@ namespace DuckyProfileSwitcher.Views
             {
                 Show();
             };
+            MenuItem runningToggle = new MenuItem("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("Open", (s, e) => Show()),
-                new MenuItem("Exit", (s, e) => ExitApplication()),
+                runningToggle,
+                new MenuItem("-"),
+                new MenuItem("Exit", (s, e) => ExitApplication()) {  },
             });
+            notifyIcon.ContextMenu.Popup += (s, e) =>
+            {
+                runningToggle.Checked = viewModel.IsRunning;
+            };
 
             viewModel.Timeout += OnViewModelTimeout;
         }
