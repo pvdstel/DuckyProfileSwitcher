@@ -2,8 +2,31 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <LangVersion>9</LangVersion>
+    <ApplicationIcon>Resources\small.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\small.ico" />
+    <None Remove="Resources\small.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hid.Net" Version="4.0.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\small.ico" />
+    <Resource Include="Resources\small.png" />
+  </ItemGroup>
 
 </Project>
