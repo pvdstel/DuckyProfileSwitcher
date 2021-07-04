@@ -88,10 +88,17 @@ namespace DuckyProfileSwitcher.ViewModels
         public DuckyPadProfile? SelectedProfile
         {
             get => selectedProfile;
-            private set
+            set
             {
-                selectedProfile = value;
-                OnPropertyChanged();
+                if (selectedProfile != value)
+                {
+                    if (value != null)
+                    {
+                        SetProfile(value);
+                    }
+                    selectedProfile = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -116,6 +123,7 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 return;
             }
+            System.Diagnostics.Debug.WriteLine($"Setting the profile to {profile}.");
 
             IsBusy = true;
             await RunCatchDuckyPadException(async () =>

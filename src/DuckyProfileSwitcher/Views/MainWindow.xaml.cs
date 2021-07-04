@@ -2,7 +2,6 @@
 using DuckyProfileSwitcher.ViewModels;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -116,15 +115,6 @@ namespace DuckyProfileSwitcher.Views
         private void ExitApplication_Click(object sender, RoutedEventArgs e)
         {
             ExitApplication();
-        }
-
-        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            var profile = e.AddedItems.OfType<DuckyPadProfile>().FirstOrDefault();
-            if (profile != null)
-            {
-                viewModel.SetProfile(profile);
-            }
         }
     }
 }

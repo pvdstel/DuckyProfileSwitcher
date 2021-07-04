@@ -12,9 +12,10 @@
     Height="450"
     Closing="Window_Closing"
     Icon="/Resources/small.ico"
+    Loaded="Window_Loaded"
     ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" Loaded="Window_Loaded">
+    mc:Ignorable="d">
 
     <Grid>
         <Image
@@ -65,8 +66,7 @@
                 <Button
                     x:Name="previousProfileButton"
                     Command="{Binding PreviousProfile}"
-                    Content="Previous profile"
-                    />
+                    Content="Previous profile" />
                 <Button
                     x:Name="nextProfileButton"
                     Command="{Binding NextProfile}"
@@ -76,8 +76,7 @@
                     Margin="0,0,10,10"
                     IsEnabled="{Binding CanSwitchProfile}"
                     ItemsSource="{Binding Profiles}"
-                    SelectedItem="{Binding SelectedProfile, Mode=OneWay}"
-                    SelectionChanged="ComboBox_SelectionChanged">
+                    SelectedItem="{Binding SelectedProfile}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:DuckyPadProfile}">
                             <TextBlock Text="{Binding DisplayText}" />
