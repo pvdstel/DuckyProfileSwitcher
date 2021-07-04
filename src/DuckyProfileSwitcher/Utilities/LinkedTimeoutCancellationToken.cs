@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace DuckyProfileSwitcher
+namespace DuckyProfileSwitcher.Utilities
 {
     class LinkedTimeoutCancellationToken : IDisposable
     {

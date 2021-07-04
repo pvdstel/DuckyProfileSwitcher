@@ -1,4 +1,5 @@
 ﻿using DuckyProfileSwitcher.Models;
+using DuckyProfileSwitcher.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace DuckyProfileSwitcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, IDisposable
     {
-        private const int PollingDelayMS = 50000;
+        private const int PollingDelayMS = 5000;
         private const int ActionCancellationTimeMS = 10000;
         private const int InfoRetrievalCount = 1;
         private const int ProfileRetrievalCount = 6;
@@ -198,6 +199,7 @@ namespace DuckyProfileSwitcher.ViewModels
                             return new DuckyPadProfile(byte.Parse(numberAndText[0]), numberAndText[1]);
                         })
                         .OrderBy(p => p.Number);
+                    
                     Profiles = new(nextProfiles);
                     RefreshInfo();
                 });
