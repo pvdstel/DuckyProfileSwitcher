@@ -36,7 +36,7 @@ namespace DuckyProfileSwitcher.Views
             {
                 Show();
             };
-            MenuItem runningToggle = new MenuItem("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
+            MenuItem runningToggle = new("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("Open", (s, e) => Show()),
