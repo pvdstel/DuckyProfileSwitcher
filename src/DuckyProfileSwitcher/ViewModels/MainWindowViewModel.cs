@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DuckyProfileSwitcher.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, IDisposable
+    public class MainWindowViewModel : Notifyable, IDisposable
     {
         private const int DeviceChangeDelay = 200;
         private bool disposedValue;
@@ -26,7 +26,11 @@ namespace DuckyProfileSwitcher.ViewModels
             DuckyPadManager.Instance.SelectedProfileChanged += DuckyPadManagerChange;
         }
 
-        public event EventHandler? Timeout;
+        public event EventHandler? Timeout
+        {
+            add { DuckyPadManager.Instance.Timeout += value; } 
+            remove { DuckyPadManager.Instance.Timeout -= value; } 
+        }
 
         public bool IsBusy
         {

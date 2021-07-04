@@ -6,7 +6,15 @@ namespace DuckyProfileSwitcher.Models
 {
     public class ProfileSearchDescription
     {
-        public int? Number { get; set; }
+        public ProfileSearchDescription() { }
+
+        public ProfileSearchDescription(ProfileSearchDescription original)
+        {
+            Number = original.Number;
+            Name = original.Name;
+        }
+
+        public int? Number { get; set; } = 1;
 
         public string? Name { get; set; }
 

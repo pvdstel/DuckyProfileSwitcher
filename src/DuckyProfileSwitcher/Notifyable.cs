@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace DuckyProfileSwitcher.ViewModels
+namespace DuckyProfileSwitcher
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public class Notifyable : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -2,6 +2,15 @@
 {
     public class Rule
     {
+        public Rule() { }
+
+        public Rule(Rule original)
+        {
+            Name = original.Name;
+            ProfileDescription = new(original.ProfileDescription);
+            Enabled = original.Enabled;
+        }
+
         public string Name { get; set; } = string.Empty;
 
         public ProfileSearchDescription ProfileDescription { get; set; } = new ProfileSearchDescription();

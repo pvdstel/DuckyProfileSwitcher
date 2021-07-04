@@ -6,6 +6,8 @@
     xmlns:local="clr-namespace:DuckyProfileSwitcher.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:DuckyProfileSwitcher.Models"
+    xmlns:viewmodels="clr-namespace:DuckyProfileSwitcher.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:RuleListViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="600"
     mc:Ignorable="d">
@@ -15,9 +17,18 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <WrapPanel Grid.Column="1" Orientation="Vertical">
-            <Button Margin="10,0,0,10" Content="Add rule" />
-            <Button Margin="10,0,0,10" Content="Edit rule" />
-            <Button Margin="10,0,0,10" Content="Delete rule" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding AddRuleCommand}"
+                Content="Add rule" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding EditRuleCommand}"
+                Content="Edit rule" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding DeleteRuleCommand}"
+                Content="Delete rule" />
             <Button Margin="10,0,0,10" Content="Move up" />
             <Button Margin="10,0,0,10" Content="Move down" />
         </WrapPanel>
@@ -25,7 +36,13 @@
             Background="Transparent"
             BorderBrush="{DynamicResource DividerFill}"
             BorderThickness="1"
-            ItemsSource="{Binding Rules}">
+            ItemsSource="{Binding Rules}"
+            SelectedItem="{Binding SelectedRule}">
+            <ListView.Resources>
+                <Style BasedOn="{StaticResource MahApps.Styles.ListViewItem}" TargetType="ListViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                </Style>
+            </ListView.Resources>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="60" Header="Enabled">

@@ -1,5 +1,6 @@
 ﻿using DuckyProfileSwitcher.ViewModels;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DuckyProfileSwitcher.Controls
 {
@@ -14,6 +15,11 @@ namespace DuckyProfileSwitcher.Controls
         {
             InitializeComponent();
             DataContext = viewModel;
+        }
+
+        private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            viewModel.EditRule();
         }
     }
 }
