@@ -20,17 +20,17 @@
             <Button
                 Margin="10,0,0,10"
                 Command="{Binding AddRuleCommand}"
-                Content="Add rule" />
+                Content="_Add rule" />
             <Button
                 Margin="10,0,0,10"
                 Command="{Binding EditRuleCommand}"
-                Content="Edit rule" />
+                Content="_Edit rule" />
             <Button
                 Margin="10,0,0,10"
                 Command="{Binding DeleteRuleCommand}"
-                Content="Delete rule" />
-            <Button Margin="10,0,0,10" Content="Move up" />
-            <Button Margin="10,0,0,10" Content="Move down" />
+                Content="_Delete rule" />
+            <Button Margin="10,0,0,10" Content="Move _up" />
+            <Button Margin="10,0,0,10" Content="Mo_ve down" />
         </WrapPanel>
         <ListView
             Background="Transparent"

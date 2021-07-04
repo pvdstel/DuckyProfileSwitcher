@@ -1,5 +1,6 @@
 ﻿using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.ViewModels;
+using System.Threading.Tasks;
 
 namespace DuckyProfileSwitcher.Views
 {
@@ -16,6 +17,13 @@ namespace DuckyProfileSwitcher.Views
             InitializeComponent();
             viewModel = new(rule);
             DataContext = viewModel;
+        }
+
+        private async void Window_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ruleName.Focus();
+            await Task.Delay(100);
+            ruleName.SelectAll();
         }
 
         private void SaveButton_Click(object sender, System.Windows.RoutedEventArgs e)

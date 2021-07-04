@@ -76,18 +76,18 @@
                 <CheckBox
                     Margin="0,0,10,10"
                     VerticalAlignment="Center"
-                    Content="Running"
+                    Content="_Running"
                     IsChecked="{Binding IsRunning}" />
                 <Button
                     x:Name="previousProfileButton"
                     Margin="0,0,10,10"
                     Command="{Binding PreviousProfile}"
-                    Content="Previous profile" />
+                    Content="_Previous profile" />
                 <Button
                     x:Name="nextProfileButton"
                     Margin="0,0,10,10"
                     Command="{Binding NextProfile}"
-                    Content="Next profile" />
+                    Content="_Next profile" />
                 <ComboBox
                     Width="100"
                     Margin="0,0,10,10"

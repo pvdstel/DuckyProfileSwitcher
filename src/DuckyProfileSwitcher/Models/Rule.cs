@@ -11,7 +11,7 @@
             Enabled = original.Enabled;
         }
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } = "New rule";
 
         public ProfileSearchDescription ProfileDescription { get; set; } = new ProfileSearchDescription();
 
