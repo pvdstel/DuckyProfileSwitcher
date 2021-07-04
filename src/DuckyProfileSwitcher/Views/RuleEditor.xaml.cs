@@ -9,6 +9,7 @@ namespace DuckyProfileSwitcher.Views
     public partial class RuleEditor : MahApps.Metro.Controls.MetroWindow
     {
         private readonly RuleViewModel viewModel;
+        private int errorCount = 0;
 
         public RuleEditor(Rule rule)
         {
@@ -27,6 +28,19 @@ namespace DuckyProfileSwitcher.Views
         {
             DialogResult = false;
             Close();
+        }
+
+        private void MetroWindow_Error(object sender, System.Windows.Controls.ValidationErrorEventArgs e)
+        {
+            if (e.Action == System.Windows.Controls.ValidationErrorEventAction.Added)
+            {
+                ++errorCount;
+            }
+            else if (e.Action == System.Windows.Controls.ValidationErrorEventAction.Removed)
+            {
+                --errorCount;
+            }
+            save.IsEnabled = errorCount == 0;
         }
     }
 }

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:validators="clr-namespace:DuckyProfileSwitcher.Validators"
     Title="Edit rule"
     Width="450"
     d:DesignHeight="600"
@@ -16,6 +17,7 @@
     ShowInTaskbar="False"
     SizeToContent="Height"
     TitleCharacterCasing="Normal"
+    Validation.Error="MetroWindow_Error"
     WindowStartupLocation="CenterOwner"
     WindowTitleBrush="#333"
     mc:Ignorable="d">
@@ -37,10 +39,15 @@
             Header="About this rule">
             <StackPanel>
                 <Label Content="Name" />
-                <TextBox
-                    Height="23"
-                    Text="{Binding Name}"
-                    TextWrapping="Wrap" />
+                <TextBox Height="23" TextWrapping="Wrap">
+                    <TextBox.Text>
+                        <Binding NotifyOnValidationError="True" Path="Name">
+                            <Binding.ValidationRules>
+                                <validators:RequiredValidation ValidatesOnTargetUpdated="True" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
                 <Label Margin="0,10,0,0" Content="Profile to activate" />
                 <Grid Margin="15,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -60,8 +67,15 @@
                         HorizontalAlignment="Left"
                         IsEnabled="{Binding UsesProfileSearch, Converter={StaticResource NotConverter}}"
                         Maximum="32"
-                        Minimum="1"
-                        Value="{Binding ProfileNumber}" />
+                        Minimum="1">
+                        <mah:NumericUpDown.Value>
+                            <Binding NotifyOnValidationError="True" Path="ProfileNumber">
+                                <Binding.ValidationRules>
+                                    <validators:RangeValidation Maximum="32" Minimum="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </mah:NumericUpDown.Value>
+                    </mah:NumericUpDown>
                     <RadioButton
                         Grid.Row="2"
                         Content="Search by name"
