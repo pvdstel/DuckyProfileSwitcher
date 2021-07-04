@@ -37,16 +37,27 @@ namespace DuckyProfileSwitcher.Views
                 Show();
             };
             MenuItem runningToggle = new("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
+            MenuItem goToProfile = new("Go to", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("Open", (s, e) => Show()),
                 runningToggle,
+                goToProfile,
                 new MenuItem("-"),
                 new MenuItem("Exit", (s, e) => ExitApplication()) {  },
             });
             notifyIcon.ContextMenu.Popup += (s, e) =>
             {
                 runningToggle.Checked = viewModel.IsRunning;
+                goToProfile.MenuItems.Clear();
+                foreach (DuckyPadProfile profile in viewModel.Profiles)
+                {
+                    goToProfile.MenuItems.Add(new MenuItem(profile.DisplayText, (s, e) => viewModel.SetProfile(profile))
+                    {
+                        RadioCheck = true,
+                        Checked = viewModel.SelectedProfile == profile,
+                    });
+                }
             };
 
             viewModel.Timeout += OnViewModelTimeout;
