@@ -13,6 +13,7 @@
     Icon="/Resources/small.ico"
     NonActiveGlowBrush="#c0c0c0"
     ResizeMode="NoResize"
+    ShowInTaskbar="False"
     SizeToContent="Height"
     TitleCharacterCasing="Normal"
     WindowStartupLocation="CenterOwner"
@@ -76,16 +77,20 @@
             </StackPanel>
         </GroupBox>
         <WrapPanel Margin="10,10,10,0" HorizontalAlignment="Right">
-            <Button x:Name="save"
+            <Button
+                x:Name="save"
                 Width="80"
                 Margin="0,0,0,10"
+                Click="SaveButton_Click"
                 Content="OK"
-                IsDefault="True" Click="SaveButton_Click" />
-            <Button x:Name="cancel"
+                IsDefault="True" />
+            <Button
+                x:Name="cancel"
                 Width="80"
                 Margin="10,0,0,10"
+                Click="CancelButton_Click"
                 Content="Cancel"
-                IsCancel="True" Click="CancelButton_Click" />
+                IsCancel="True" />
         </WrapPanel>
     </StackPanel>
 </mah:MetroWindow>
