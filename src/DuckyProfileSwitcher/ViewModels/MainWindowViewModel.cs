@@ -9,10 +9,10 @@ namespace DuckyProfileSwitcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, IDisposable
     {
-        private const int PollingDelayMS = 1000;
+        private const int PollingDelayMS = 2000;
         private const int ActionCancellationTimeMS = 10000;
-        private const int InfoRetrievalCount = 5;
-        private const int ProfileRetrievalCount = 30;
+        private const int InfoRetrievalCount = 3;
+        private const int ProfileRetrievalCount = 15;
         private bool disposedValue;
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly CancellationToken viewModelLifetimeToken;

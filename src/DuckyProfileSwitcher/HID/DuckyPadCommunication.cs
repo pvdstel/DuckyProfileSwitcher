@@ -22,15 +22,23 @@ namespace DuckyProfileSwitcher.HID
 
         public static async Task<bool> IsConnected(CancellationToken cancellationToken)
         {
-            IDeviceFactory? hidFactory = new FilterDeviceDefinition()
-                .CreateWindowsHidDeviceFactory();
+            try
+            {
+                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                IDeviceFactory? hidFactory = new FilterDeviceDefinition()
+                    .CreateWindowsHidDeviceFactory();
 
-            bool exists = (await hidFactory.GetConnectedDeviceDefinitionsAsync(cancellationToken).ConfigureAwait(false))
-                .Any(hid =>
+                var definitions = await hidFactory.GetConnectedDeviceDefinitionsAsync(cancellationToken).ConfigureAwait(false);
+                bool exists = definitions.Any(hid =>
                     hid.Usage == CountedBufferUsage
                     && hid.Manufacturer.Contains(VendorName));
 
-            return exists;
+                return exists;
+            }
+            finally
+            {
+                semaphoreSlim.Release();
+            }
         }
 
         public static async Task<DuckyPadInfo> GetDuckyPadInfo(CancellationToken cancellationToken)
