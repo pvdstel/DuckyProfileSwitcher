@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace DuckyProfileSwitcher.Views
 {
@@ -14,16 +15,39 @@ namespace DuckyProfileSwitcher.Views
     public partial class MainWindow : Window
     {
         private readonly MainWindowViewModel viewModel = new();
-        private readonly NotifyIcon notifyIcon;
+        private readonly NotifyIcon notifyIcon = new();
+        private readonly HID.DeviceListener deviceListener = new();
         private bool allowClose = false;
 
         public MainWindow()
         {
             InitializeComponent();
             DataContext = viewModel;
+        }
 
-            notifyIcon = new();
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
             CreateNotifyIcon();
+            HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            source.AddHook(HwndHandler);
+            deviceListener.RegisterDeviceNotification(source.Handle);
+        }
+
+        private IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
+        {
+            if (msg == HID.DeviceListener.WM_DEVICECHANGE)
+            {
+                switch ((int)wparam)
+                {
+                    case HID.DeviceListener.DBT_DEVICEARRIVAL:
+                    case HID.DeviceListener.DBT_DEVICEREMOVECOMPLETE:
+                        viewModel.DeviceChange();
+                        break;
+                }
+            }
+
+            handled = false;
+            return IntPtr.Zero;
         }
 
         private void CreateNotifyIcon()
@@ -78,6 +102,7 @@ namespace DuckyProfileSwitcher.Views
         {
             if (allowClose)
             {
+                deviceListener.Dispose();
                 viewModel.Dispose();
                 notifyIcon.Dispose();
             }
@@ -86,16 +111,6 @@ namespace DuckyProfileSwitcher.Views
                 e.Cancel = true;
                 Hide();
             }
-        }
-
-        private void PreviousProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.PreviousProfile();
-        }
-
-        private void NextProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            viewModel.NextProfile();
         }
 
         private void ExitApplication_Click(object sender, RoutedEventArgs e)

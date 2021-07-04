@@ -14,7 +14,7 @@
     Icon="/Resources/small.ico"
     ResizeMode="CanResize"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Loaded="Window_Loaded">
 
     <Grid>
         <Image
@@ -64,18 +64,17 @@
                     IsChecked="{Binding IsRunning}" />
                 <Button
                     x:Name="previousProfileButton"
-                    Click="PreviousProfileButton_Click"
+                    Command="{Binding PreviousProfile}"
                     Content="Previous profile"
-                    IsEnabled="{Binding IsConnected}" />
+                    />
                 <Button
                     x:Name="nextProfileButton"
-                    Click="NextProfileButton_Click"
-                    Content="Next profile"
-                    IsEnabled="{Binding IsConnected}" />
+                    Command="{Binding NextProfile}"
+                    Content="Next profile" />
                 <ComboBox
                     Width="100"
                     Margin="0,0,10,10"
-                    IsEnabled="{Binding IsConnected}"
+                    IsEnabled="{Binding CanSwitchProfile}"
                     ItemsSource="{Binding Profiles}"
                     SelectedItem="{Binding SelectedProfile, Mode=OneWay}"
                     SelectionChanged="ComboBox_SelectionChanged">
