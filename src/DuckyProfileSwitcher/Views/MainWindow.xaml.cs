@@ -11,7 +11,7 @@ namespace DuckyProfileSwitcher.Views
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MahApps.Metro.Controls.MetroWindow
     {
         private readonly MainWindowViewModel viewModel = new();
         private readonly NotifyIcon notifyIcon = new();

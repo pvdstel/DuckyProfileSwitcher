@@ -3,17 +3,34 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:DuckyProfileSwitcher"
+    xmlns:mahControls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     StartupUri="Views/MainWindow.xaml">
 
     <Application.Resources>
-        <SolidColorBrush x:Key="DividerFill">#e0e0e0</SolidColorBrush>
-        <SolidColorBrush x:Key="StatusHeaderEnabledBrush">#24ce39</SolidColorBrush>
-        <SolidColorBrush x:Key="StatusHeaderDisabledBrush">#f20069</SolidColorBrush>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Padding" Value="8,4" />
-        </Style>
+            <SolidColorBrush x:Key="DividerFill" Color="{DynamicResource MahApps.Colors.Gray}" />
+            <SolidColorBrush x:Key="StatusHeaderEnabledBrush">#24ce39</SolidColorBrush>
+            <SolidColorBrush x:Key="StatusHeaderDisabledBrush">#f20069</SolidColorBrush>
 
-        <Style BasedOn="{StaticResource ButtonStyle}" TargetType="{x:Type Button}" />
+            <Style BasedOn="{StaticResource MahApps.Styles.Button}" TargetType="{x:Type Button}">
+                <Setter Property="mahControls:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontWeight" Value="Regular" />
+                <Setter Property="Padding" Value="7,5" />
+            </Style>
+
+            <Style BasedOn="{StaticResource MahApps.Styles.GridViewColumnHeader}" TargetType="{x:Type GridViewColumnHeader}">
+                <Setter Property="mahControls:ControlsHelper.ContentCharacterCasing" Value="Normal" />
+                <Setter Property="FontWeight" Value="Regular" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Padding" Value="5,0" />
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

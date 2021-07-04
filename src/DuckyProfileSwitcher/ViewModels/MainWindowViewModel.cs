@@ -173,7 +173,8 @@ namespace DuckyProfileSwitcher.ViewModels
                 {
                     var info = await HID.DuckyPadCommunication.GetDuckyPadInfo(ltct.Token);
                     DuckyPadDetails = $"Firmware: {info.Major}.{info.Minor}.{info.Patch} | Model: {info.Model} | Serial: {info.SerialNumber:X}";
-                    SelectedProfile = profiles.FirstOrDefault(p => p.Number == info.Profile);
+                    selectedProfile = profiles.FirstOrDefault(p => p.Number == info.Profile);
+                    OnPropertyChanged(nameof(SelectedProfile));
                 });
             }
             else
