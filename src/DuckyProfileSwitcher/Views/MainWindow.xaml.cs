@@ -73,13 +73,21 @@ namespace DuckyProfileSwitcher.Views
             {
                 runningToggle.Checked = viewModel.IsRunning;
                 goToProfile.MenuItems.Clear();
-                foreach (DuckyPadProfile profile in viewModel.Profiles)
+                if (viewModel.Profiles != null)
                 {
-                    goToProfile.MenuItems.Add(new MenuItem(profile.DisplayText, (s, e) => viewModel.SetProfile(profile))
+                    goToProfile.Visible = true;
+                    foreach (DuckyPadProfile profile in viewModel.Profiles)
                     {
-                        RadioCheck = true,
-                        Checked = viewModel.SelectedProfile == profile,
-                    });
+                        goToProfile.MenuItems.Add(new MenuItem(profile.DisplayText, (s, e) => viewModel.SetProfile(profile))
+                        {
+                            RadioCheck = true,
+                            Checked = viewModel.SelectedProfile == profile,
+                        });
+                    }
+                }
+                else
+                {
+                    goToProfile.Visible = false;
                 }
             };
 

@@ -1,105 +1,72 @@
 ﻿using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.Utilities;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 namespace DuckyProfileSwitcher.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase, IDisposable
     {
-        private const int PollingDelayMS = 10000;
-        private const int ActionCancellationTimeMS = 10000;
-        private const int InfoRetrievalCount = 1;
-        private const int ProfileRetrievalCount = 6;
         private const int DeviceChangeDelay = 200;
         private bool disposedValue;
-        private readonly CancellationTokenSource cancellationTokenSource = new();
-        private readonly CancellationToken viewModelLifetimeToken;
 
-        private bool isBusy;
-        private bool isConnected;
-        private bool isRunning;
         private string duckyPadDetails = "(disconnected)";
-        private ObservableCollection<DuckyPadProfile> profiles = new();
-        private DuckyPadProfile? selectedProfile;
 
         public MainWindowViewModel()
         {
-            viewModelLifetimeToken = cancellationTokenSource.Token;
-            PreviousProfile = new RelayCommand(() => PreviousProfileInternal(), () => CanSwitchProfile);
-            NextProfile = new RelayCommand(() => NextProfileInternal(), () => CanSwitchProfile);
+            PreviousProfile = new RelayCommand(() => _ = DuckyPadManager.Instance.PreviousProfile(), () => CanSwitchProfile);
+            NextProfile = new RelayCommand(() => _ = DuckyPadManager.Instance.NextProfile(), () => CanSwitchProfile);
 
-            if (Environment.GetCommandLineArgs().Any(a => string.Compare("run", a, true) == 0))
-            {
-                isRunning = true;
-            }
-            PollConnected();
+            DuckyPadManager.Instance.InfoChanged += DuckyPadManagerChange;
+            DuckyPadManager.Instance.IsBusyChanged += DuckyPadManagerChange;
+            DuckyPadManager.Instance.IsConnectedChanged += DuckyPadManagerChange;
+            DuckyPadManager.Instance.IsRunningChanged += DuckyPadManagerChange;
+            DuckyPadManager.Instance.ProfilesChanged += DuckyPadManagerChange;
+            DuckyPadManager.Instance.SelectedProfileChanged += DuckyPadManagerChange;
         }
 
         public event EventHandler? Timeout;
 
         public bool IsBusy
         {
-            get => isBusy;
-            set
-            {
-                isBusy = value;
-                OnPropertyChanged();
-                UpdateExecutability();
-            }
+            get => DuckyPadManager.Instance.IsBusy;
         }
 
         public bool IsConnected
         {
-            get => isConnected;
-            set
-            {
-                isConnected = value;
-                OnPropertyChanged();
-            }
+            get => DuckyPadManager.Instance.IsConnected;
         }
 
         public bool CanSwitchProfile => !IsBusy && IsConnected;
 
         public bool IsRunning
         {
-            get => isRunning;
-            set
-            {
-                isRunning = value;
-                OnPropertyChanged();
-                UpdateExecutability();
-            }
+            get => DuckyPadManager.Instance.IsRunning;
+            set => DuckyPadManager.Instance.IsRunning = value;
         }
 
-        public ObservableCollection<DuckyPadProfile> Profiles
+        public ImmutableList<DuckyPadProfile>? Profiles
         {
-            get => profiles;
-            private set
-            {
-                profiles = value;
-                OnPropertyChanged();
-            }
+            get => DuckyPadManager.Instance.Profiles;
         }
 
         public DuckyPadProfile? SelectedProfile
         {
-            get => selectedProfile;
+            get => DuckyPadManager.Instance.SelectedProfile;
             set
             {
-                if (selectedProfile != value)
+                if (value != null)
                 {
-                    if (value != null)
-                    {
-                        SetProfile(value);
-                    }
-                    selectedProfile = value;
-                    OnPropertyChanged();
+                    _ = DuckyPadManager.Instance.SetProfile(value);
                 }
+                OnPropertyChanged();
             }
+        }
+
+        public async void SetProfile(DuckyPadProfile profile)
+        {
+            await DuckyPadManager.Instance.SetProfile(profile);
         }
 
         public string DuckyPadDetails
@@ -116,172 +83,22 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public RelayCommand NextProfile { get; }
 
-        public async void SetProfile(DuckyPadProfile profile)
-        {
-            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
-            if (!IsConnected || profile == selectedProfile)
-            {
-                return;
-            }
-            System.Diagnostics.Debug.WriteLine($"Setting the profile to {profile}.");
-
-            IsBusy = true;
-            await RunCatchDuckyPadException(async () =>
-            {
-                await HID.DuckyPadCommunication.GotoProfile(profile.Number, ltct.Token);
-                await RefreshInfo();
-            });
-            IsBusy = false;
-        }
-
         public async void DeviceChange()
         {
             await Task.Delay(DeviceChangeDelay);
-            await RefreshConnected();
+            await DuckyPadManager.Instance.RefreshConnected();
         }
 
-        private void UpdateExecutability()
+        private void DuckyPadManagerChange(object sender, EventArgs e)
         {
-            OnPropertyChanged(nameof(CanSwitchProfile));
             PreviousProfile.RaiseCanExecuteChanged();
             NextProfile.RaiseCanExecuteChanged();
-            System.Diagnostics.Debug.WriteLine("Updated executability.");
-        }
-
-        private async Task RefreshConnected()
-        {
-            await Task.Delay(100);
-            bool nextIsConnected = await HID.DuckyPadCommunication.IsConnected(cancellationTokenSource.Token);
-            if (nextIsConnected && !isConnected)
-            {
-                IsConnected = true;
-                await RefreshProfiles();
-            }
-            else if (isConnected && !nextIsConnected)
-            {
-                IsConnected = false;
-                OnDisconnected();
-            }
-        }
-
-        private async Task RefreshInfo()
-        {
-            if (IsConnected)
-            {
-                using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
-                await RunCatchDuckyPadException(async () =>
-                {
-                    var info = await HID.DuckyPadCommunication.GetDuckyPadInfo(ltct.Token);
-                    DuckyPadDetails = $"Firmware: {info.Major}.{info.Minor}.{info.Patch} | Model: {info.Model} | Serial: {info.SerialNumber:X}";
-                    selectedProfile = profiles.FirstOrDefault(p => p.Number == info.Profile);
-                    OnPropertyChanged(nameof(SelectedProfile));
-                });
-            }
-            else
-            {
-                DuckyPadDetails = "(disconnected)";
-            }
-        }
-
-        private async void PreviousProfileInternal()
-        {
-            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
-            if (!IsConnected)
-            {
-                return;
-            }
-
-            IsBusy = true;
-            await RunCatchDuckyPadException(async () =>
-            {
-                await HID.DuckyPadCommunication.PreviousProfile(ltct.Token);
-                await RefreshInfo();
-            });
-            IsBusy = false;
-        }
-
-        private async void NextProfileInternal()
-        {
-            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
-            if (!IsConnected)
-            {
-                return;
-            }
-
-            IsBusy = true;
-            await RunCatchDuckyPadException(async () =>
-            {
-                await HID.DuckyPadCommunication.NextProfile(ltct.Token);
-                await RefreshInfo();
-            });
-            IsBusy = false;
-        }
-
-        private async Task RefreshProfiles()
-        {
-            if (IsConnected)
-            {
-                using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
-                await RunCatchDuckyPadException(async () =>
-                {
-                    var r = await HID.DuckyPadCommunication.ListFiles(ltct.Token);
-                    IsBusy = false;
-                    var nextProfiles = r.Where(f => f.type == HID.DuckyPadFileType.Directory)
-                        .Where(f => f.name.StartsWith("profile"))
-                        .Select(f =>
-                        {
-                            string relevantName = f.name.Substring(7);
-                            string[] numberAndText = relevantName.Split('_');
-                            return new DuckyPadProfile(byte.Parse(numberAndText[0]), numberAndText[1]);
-                        })
-                        .OrderBy(p => p.Number);
-
-                    Profiles = new(nextProfiles);
-                });
-            }
-        }
-
-        private async Task RunCatchDuckyPadException(Func<Task> task)
-        {
-            try
-            {
-                await task();
-            }
-            catch (HID.DuckyPadException dpex)
-            {
-                System.Diagnostics.Debug.WriteLine(dpex);
-            }
-            catch (OperationCanceledException)
-            {
-                Timeout?.Invoke(this, new EventArgs());
-            }
-        }
-
-        private async void PollConnected()
-        {
-            int i = 0;
-            while (!viewModelLifetimeToken.IsCancellationRequested)
-            {
-                await RefreshConnected();
-                ++i;
-                if (i >= ProfileRetrievalCount)
-                {
-                    i = 0;
-                    await RefreshProfiles();
-                }
-                else if (i % InfoRetrievalCount == 0)
-                {
-                    await RefreshInfo();
-                }
-                await Task.Delay(PollingDelayMS);
-            }
-        }
-
-        private void OnDisconnected()
-        {
-            DuckyPadDetails = "(disconnected)";
-            Profiles.Clear();
-            SelectedProfile = null;
+            HID.DuckyPadInfo? info = DuckyPadManager.Instance.Info;
+            DuckyPadDetails = info != null
+                ? $"Firmware: {info.Major}.{info.Minor}.{info.Patch} | Model: {info.Model} | Serial: {info.SerialNumber:X}"
+                : "(disconnected)";
+            System.Diagnostics.Debug.WriteLine("DuckyPadManager updated.");
+            OnPropertyChanged(string.Empty);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -290,8 +107,12 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 if (disposing)
                 {
-                    cancellationTokenSource.Cancel();
-                    cancellationTokenSource.Dispose();
+                    DuckyPadManager.Instance.InfoChanged -= DuckyPadManagerChange;
+                    DuckyPadManager.Instance.IsBusyChanged -= DuckyPadManagerChange;
+                    DuckyPadManager.Instance.IsConnectedChanged -= DuckyPadManagerChange;
+                    DuckyPadManager.Instance.IsRunningChanged -= DuckyPadManagerChange;
+                    DuckyPadManager.Instance.ProfilesChanged -= DuckyPadManagerChange;
+                    DuckyPadManager.Instance.SelectedProfileChanged -= DuckyPadManagerChange;
                 }
 
                 disposedValue = true;
