@@ -19,7 +19,7 @@ namespace DuckyProfileSwitcher.Controls
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            viewModel.EditRule();
+            viewModel.EditSelectedRule();
         }
     }
 }

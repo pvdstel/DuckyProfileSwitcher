@@ -3,27 +3,29 @@ using DuckyProfileSwitcher.Utilities;
 using DuckyProfileSwitcher.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace DuckyProfileSwitcher.ViewModels
 {
     public class RuleListViewModel : Notifyable
     {
-        private ObservableCollection<Rule> rules = new();
-        private Rule? selectedRule;
+        private ObservableCollection<RuleViewModel> rules = new();
+        private RuleViewModel? selectedRule;
 
         public RuleListViewModel()
         {
-            Rule r = new();
-            r.Name = "test";
-            
-            Rules.Add(r);
+            var viewModels = ConfigurationManager.Configuration.Rules
+                .Select(r => new RuleViewModel(r, true));
+            rules = new ObservableCollection<RuleViewModel>(viewModels);
 
             AddRuleCommand = new(NewRule);
-            EditRuleCommand = new(EditRule, () => SelectedRule != null);
-            DeleteRuleCommand = new(DeleteRule, () => SelectedRule != null);
+            EditSelectedRuleCommand = new(EditSelectedRule, () => SelectedRule != null);
+            DeleteSelectedRuleCommand = new(DeleteSelectedRule, () => SelectedRule != null);
+            MoveSelectedRuleUpCommand = new(MoveSelectedRuleUp, () => SelectedRule != null && Rules.IndexOf(SelectedRule) > 0);
+            MoveSelectedRuleDownCommand = new(MoveSelectedRuleDown, () => SelectedRule != null && Rules.IndexOf(SelectedRule) < Rules.Count - 1);
         }
 
-        public ObservableCollection<Rule> Rules
+        public ObservableCollection<RuleViewModel> Rules
         {
             get => rules;
             private set
@@ -33,7 +35,7 @@ namespace DuckyProfileSwitcher.ViewModels
             }
         }
 
-        public Rule? SelectedRule
+        public RuleViewModel? SelectedRule
         {
             get => selectedRule;
             set
@@ -45,9 +47,13 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public RelayCommand AddRuleCommand { get; }
 
-        public RelayCommand EditRuleCommand { get; }
+        public RelayCommand EditSelectedRuleCommand { get; }
 
-        public RelayCommand DeleteRuleCommand { get; }
+        public RelayCommand DeleteSelectedRuleCommand { get; }
+
+        public RelayCommand MoveSelectedRuleUpCommand { get; }
+
+        public RelayCommand MoveSelectedRuleDownCommand { get; }
 
         public void NewRule()
         {
@@ -56,15 +62,19 @@ namespace DuckyProfileSwitcher.ViewModels
             re.Owner = System.Windows.Application.Current.MainWindow;
             if (re.ShowDialog().GetValueOrDefault())
             {
-                Rules.Add(newRule);
-                SelectedRule = newRule;
+                ConfigurationManager.Configuration.Rules.Add(newRule);
+                ConfigurationManager.Save();
+                RuleViewModel rvm = new(newRule, true);
+                Rules.Add(rvm);
+                SelectedRule = rvm;
             }
         }
 
-        public void EditRule()
+        public void EditSelectedRule()
         {
-            Rule? r = SelectedRule;
-            if (r == null)
+            RuleViewModel? sr = SelectedRule;
+            Rule? r = sr?.Rule;
+            if (r == null || sr == null)
             {
                 return;
             }
@@ -74,23 +84,87 @@ namespace DuckyProfileSwitcher.ViewModels
             re.Owner = System.Windows.Application.Current.MainWindow;
             if (re.ShowDialog().GetValueOrDefault())
             {
-                ReplaceInList(Rules, r, copy);
-                SelectedRule = copy;
+                ReplaceInList(ConfigurationManager.Configuration.Rules, r, copy);
+                RuleViewModel rvm = new(copy, true);
+                ConfigurationManager.Save();
+                ReplaceInList(Rules, sr, rvm);
+                SelectedRule = rvm;
             }
         }
 
-        public void DeleteRule()
+        public void DeleteSelectedRule()
         {
-            Rule? r = SelectedRule;
-            if (r == null || !Rules.Contains(r))
+            RuleViewModel? sr = SelectedRule;
+            Rule? r = sr?.Rule;
+            if (r == null || sr == null)
             {
                 return;
             }
 
-            Rules.Remove(r);
+            if (Rules.Contains(sr))
+            {
+                Rules.Remove(sr);
+            }
+            if (ConfigurationManager.Configuration.Rules.Contains(r))
+            {
+                ConfigurationManager.Configuration.Rules.Remove(r);
+                ConfigurationManager.Save();
+            }
         }
 
-        private void ReplaceInList(IList<Rule> list, Rule existingRule, Rule newRule)
+        private void MoveSelectedRuleUp()
+        {
+            RuleViewModel? sr = SelectedRule;
+            Rule? r = sr?.Rule;
+            if (r == null || sr == null)
+            {
+                return;
+            }
+
+            int vIndex = Rules.IndexOf(sr);
+            if (vIndex > 0)
+            {
+                Rules.RemoveAt(vIndex);
+                Rules.Insert(vIndex - 1, sr);
+            }
+
+            int index = ConfigurationManager.Configuration.Rules.IndexOf(r);
+            if (index > 0)
+            {
+                ConfigurationManager.Configuration.Rules.RemoveAt(index);
+                ConfigurationManager.Configuration.Rules.Insert(index - 1, r);
+            }
+
+            SelectedRule = sr;
+        }
+
+        public void MoveSelectedRuleDown()
+        {
+            RuleViewModel? sr = SelectedRule;
+            Rule? r = sr?.Rule;
+            if (r == null || sr == null)
+            {
+                return;
+            }
+
+            int vIndex = Rules.IndexOf(sr);
+            if (vIndex < Rules.Count - 1)
+            {
+                Rules.RemoveAt(vIndex);
+                Rules.Insert(vIndex + 1, sr);
+            }
+
+            int index = ConfigurationManager.Configuration.Rules.IndexOf(r);
+            if (index < ConfigurationManager.Configuration.Rules.Count - 1)
+            {
+                ConfigurationManager.Configuration.Rules.RemoveAt(index);
+                ConfigurationManager.Configuration.Rules.Insert(index + 1, r);
+            }
+
+            SelectedRule = sr;
+        }
+
+        private void ReplaceInList<T>(IList<T> list, T existingRule, T newRule)
         {
             int index = list.IndexOf(existingRule);
             if (index < 0)

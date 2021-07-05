@@ -50,5 +50,17 @@ namespace DuckyProfileSwitcher.Views
             }
             save.IsEnabled = errorCount == 0;
         }
+
+        private void profileNumberRadio_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            profileNumber.Focus();
+            profileNumber.SelectAll();
+        }
+
+        private void profileNameRadio_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            profileSearchName.Focus();
+            profileSearchName.SelectAll();
+        }
     }
 }

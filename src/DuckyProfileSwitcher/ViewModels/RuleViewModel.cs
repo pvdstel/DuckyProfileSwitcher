@@ -4,9 +4,12 @@ namespace DuckyProfileSwitcher.ViewModels
 {
     public class RuleViewModel : Notifyable
     {
-        public RuleViewModel(Rule rule)
+        private readonly bool autoCommit;
+
+        public RuleViewModel(Rule rule, bool autoCommit = false)
         {
             Rule = rule;
+            this.autoCommit = autoCommit;
         }
 
         public Rule Rule { get; }
@@ -42,13 +45,31 @@ namespace DuckyProfileSwitcher.ViewModels
         public int? ProfileNumber
         {
             get => Rule.ProfileDescription.Number;
-            set => Rule.ProfileDescription.Number = value;
+            set
+            {
+                Rule.ProfileDescription.Number = value;
+                OnPropertyChanged();
+            }
         }
 
         public string? ProfileName
         {
             get => Rule.ProfileDescription.Name;
-            set => Rule.ProfileDescription.Name = value;
+            set
+            {
+                Rule.ProfileDescription.Name = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Enabled
+        {
+            get => Rule.Enabled;
+            set
+            {
+                Rule.Enabled = value;
+                OnPropertyChanged();
+            }
         }
     }
 }

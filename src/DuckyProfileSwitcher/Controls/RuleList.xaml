@@ -23,14 +23,20 @@
                 Content="_Add rule" />
             <Button
                 Margin="10,0,0,10"
-                Command="{Binding EditRuleCommand}"
+                Command="{Binding EditSelectedRuleCommand}"
                 Content="_Edit rule" />
             <Button
                 Margin="10,0,0,10"
-                Command="{Binding DeleteRuleCommand}"
+                Command="{Binding DeleteSelectedRuleCommand}"
                 Content="_Delete rule" />
-            <Button Margin="10,0,0,10" Content="Move _up" />
-            <Button Margin="10,0,0,10" Content="Mo_ve down" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding MoveSelectedRuleUpCommand}"
+                Content="Move _up" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding MoveSelectedRuleDownCommand}"
+                Content="Mo_ve down" />
         </WrapPanel>
         <ListView
             Background="Transparent"

@@ -12,6 +12,7 @@
     d:DesignHeight="600"
     GlowBrush="#333"
     Icon="/Resources/small.ico"
+    Loaded="Window_Loaded"
     NonActiveGlowBrush="#c0c0c0"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
@@ -20,7 +21,7 @@
     Validation.Error="MetroWindow_Error"
     WindowStartupLocation="CenterOwner"
     WindowTitleBrush="#333"
-    mc:Ignorable="d" Loaded="Window_Loaded">
+    mc:Ignorable="d">
 
     <mah:MetroWindow.IconTemplate>
         <DataTemplate>
@@ -63,8 +64,13 @@
                         <RowDefinition Height="5" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <RadioButton Content="Profile number" IsChecked="{Binding UsesProfileSearch, Converter={StaticResource NotConverter}}" />
+                    <RadioButton
+                        x:Name="profileNumberRadio"
+                        Checked="profileNumberRadio_Checked"
+                        Content="Profile number"
+                        IsChecked="{Binding UsesProfileSearch, Converter={StaticResource NotConverter}}" />
                     <mah:NumericUpDown
+                        x:Name="profileNumber"
                         Grid.Column="2"
                         Width="100"
                         HorizontalAlignment="Left"
@@ -80,10 +86,13 @@
                         </mah:NumericUpDown.Value>
                     </mah:NumericUpDown>
                     <RadioButton
+                        x:Name="profileNameRadio"
                         Grid.Row="2"
+                        Checked="profileNameRadio_Checked"
                         Content="Search by name"
                         IsChecked="{Binding UsesProfileSearch}" />
                     <TextBox
+                        x:Name="profileSearchName"
                         Grid.Row="2"
                         Grid.Column="2"
                         Width="150"
