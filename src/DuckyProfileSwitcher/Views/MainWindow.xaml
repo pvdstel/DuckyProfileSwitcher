@@ -27,7 +27,7 @@
             <Button
                 x:Name="exitApplication"
                 Click="ExitApplication_Click"
-                Content="Exit app"
+                Content="_Quit app"
                 ToolTip="Exits the application without minimizing to the system tray" />
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>

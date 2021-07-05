@@ -1,7 +1,9 @@
 ﻿using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.ViewModels;
+using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.IO;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
@@ -17,6 +19,7 @@ namespace DuckyProfileSwitcher.Views
         private readonly NotifyIcon notifyIcon = new();
         private readonly HID.DeviceListener deviceListener = new();
         private bool allowClose = false;
+        private CancellationTokenSource? closeDialogCancellation;
 
         public MainWindow()
         {
@@ -99,10 +102,31 @@ namespace DuckyProfileSwitcher.Views
             notifyIcon.ShowBalloonTip(5000, "duckyPad Profile Switcher", "A duckyPad operation could not complete in time.", ToolTipIcon.Warning);
         }
 
-        private void ExitApplication()
+        private async void ExitApplication()
         {
-            allowClose = true;
-            Close();
+            if (closeDialogCancellation != null)
+            {
+                return;
+            }
+            closeDialogCancellation = new CancellationTokenSource();
+            var result = await this.ShowMessageAsync("Exit duckyPad Profile Switcher?", string.Empty, MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings
+            {
+                AffirmativeButtonText = "Yes",
+                AnimateHide = false,
+                AnimateShow = false,
+                CancellationToken = closeDialogCancellation.Token,
+                DefaultButtonFocus = MessageDialogResult.Affirmative,
+                DialogResultOnCancel = MessageDialogResult.Canceled,
+                DialogTitleFontSize = 18,
+                NegativeButtonText = "No",
+            });
+            closeDialogCancellation?.Dispose();
+            closeDialogCancellation = null;
+            if (result == MessageDialogResult.Affirmative)
+            {
+                allowClose = true;
+                Close();
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -116,6 +140,9 @@ namespace DuckyProfileSwitcher.Views
             else
             {
                 e.Cancel = true;
+                closeDialogCancellation?.Cancel();
+                closeDialogCancellation?.Dispose();
+                closeDialogCancellation = null;
                 Hide();
             }
         }
