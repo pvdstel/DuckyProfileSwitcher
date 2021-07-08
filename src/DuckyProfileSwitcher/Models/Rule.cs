@@ -18,6 +18,9 @@ namespace DuckyProfileSwitcher.Models
             Enabled = original.Enabled;
             ProfileNumber = original.ProfileNumber;
             ProfileName = original.ProfileName;
+            AppName = original.AppName;
+            WindowTitle = original.WindowTitle;
+            WindowClass = original.WindowClass;
         }
 
         public Guid Id { get; set; }
@@ -32,6 +35,11 @@ namespace DuckyProfileSwitcher.Models
 
         public string? ProfileName { get; set; }
 
+        public string? AppName { get; set; }
+
+        public string? WindowTitle { get; set; }
+
+        public string? WindowClass { get; set; }
 
         public override bool Equals(object? obj)
         {

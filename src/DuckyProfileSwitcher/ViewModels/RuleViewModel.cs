@@ -6,6 +6,9 @@ namespace DuckyProfileSwitcher.ViewModels
     {
         private readonly bool autoCommit;
 
+        public RuleViewModel()
+            : this(new Rule(), false) { }
+
         public RuleViewModel(Rule rule, bool autoCommit = false)
         {
             Rule = rule;
@@ -82,6 +85,36 @@ namespace DuckyProfileSwitcher.ViewModels
             set
             {
                 Rule.ProfileName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? AppName
+        {
+            get => Rule.AppName;
+            set
+            {
+                Rule.AppName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? WindowTitle
+        {
+            get => Rule.WindowTitle;
+            set
+            {
+                Rule.WindowTitle = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? WindowClass
+        {
+            get => Rule.WindowClass;
+            set
+            {
+                Rule.WindowClass = value;
                 OnPropertyChanged();
             }
         }

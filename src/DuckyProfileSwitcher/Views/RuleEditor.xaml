@@ -6,16 +6,16 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:validators="clr-namespace:DuckyProfileSwitcher.Validators"
+    xmlns:viewmodels="clr-namespace:DuckyProfileSwitcher.ViewModels"
     Title="Edit rule"
-    Width="450"
-    d:DesignHeight="600"
+    Width="800"
+    Height="600"
+    d:DataContext="{d:DesignInstance viewmodels:RuleViewModel}"
     GlowBrush="#333"
     Icon="/Resources/small.ico"
     Loaded="Window_Loaded"
     NonActiveGlowBrush="#c0c0c0"
-    ResizeMode="NoResize"
     ShowInTaskbar="False"
-    SizeToContent="Height"
     TitleCharacterCasing="Normal"
     Validation.Error="MetroWindow_Error"
     WindowStartupLocation="CenterOwner"
@@ -28,83 +28,123 @@
         </DataTemplate>
     </mah:MetroWindow.IconTemplate>
 
-    <StackPanel>
-        <GroupBox
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Padding="5" VerticalScrollBarVisibility="Auto">
+            <WrapPanel>
+                <GroupBox
+                    Width="380"
+                    Margin="5"
+                    Padding="10,5,10,10"
+                    Header="About this rule">
+                    <StackPanel>
+                        <Label Content="Name" />
+                        <TextBox x:Name="ruleName" TextWrapping="Wrap">
+                            <TextBox.Text>
+                                <Binding NotifyOnValidationError="True" Path="Name">
+                                    <Binding.ValidationRules>
+                                        <validators:RequiredValidation ValidatesOnTargetUpdated="True" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Margin="0,10,0,0" Content="Profile to activate" />
+                        <Grid Margin="15,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <RadioButton
+                                x:Name="profileNumberRadio"
+                                Checked="ProfileNumberRadio_Checked"
+                                Content="Profile number"
+                                IsChecked="{Binding UsesProfileNumber}" />
+                            <mah:NumericUpDown
+                                x:Name="profileNumber"
+                                Grid.Column="2"
+                                Width="100"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding UsesProfileNumber}"
+                                Maximum="32"
+                                Minimum="1">
+                                <mah:NumericUpDown.Value>
+                                    <Binding NotifyOnValidationError="True" Path="ProfileNumber">
+                                        <Binding.ValidationRules>
+                                            <validators:RangeValidation Maximum="32" Minimum="1" />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </mah:NumericUpDown.Value>
+                            </mah:NumericUpDown>
+                            <RadioButton
+                                x:Name="profileNameRadio"
+                                Grid.Row="2"
+                                Checked="ProfileNameRadio_Checked"
+                                Content="Search by name"
+                                IsChecked="{Binding UsesProfileSearch}" />
+                            <TextBox
+                                x:Name="profileSearchName"
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Width="150"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding UsesProfileSearch}"
+                                Text="{Binding ProfileName}" />
+                            <RadioButton
+                                Grid.Row="4"
+                                Content="Go to sleep"
+                                IsChecked="{Binding UsesGoToSleep}" />
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                Visibility="Hidden" />
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox
+                    Width="380"
+                    Margin="5"
+                    Padding="10,5,10,10"
+                    Header="Active application">
+                    <StackPanel>
+                        <Label Content="Application name (without .exe, case insensitive)" />
+                        <TextBox Text="{Binding AppName}" TextWrapping="Wrap" />
+                        <Label Content="Window title must contain (case insensitive)" />
+                        <TextBox Text="{Binding WindowTitle}" TextWrapping="Wrap" />
+                        <Label Content="Window class must be (exactly)" />
+                        <TextBox Text="{Binding WindowClass}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox
+                    Width="380"
+                    Margin="5"
+                    Padding="10,5,10,10"
+                    Header="Active application">
+                    <StackPanel>
+                        <Label Content="Application name (without .exe, case insensitive)" />
+                        <TextBox Text="{Binding AppName}" TextWrapping="Wrap" />
+                        <Label Content="Window title must contain (case insensitive)" />
+                        <TextBox Text="{Binding WindowTitle}" TextWrapping="Wrap" />
+                        <Label Content="Window class must be (exactly)" />
+                        <TextBox Text="{Binding WindowClass}" TextWrapping="Wrap" />
+                    </StackPanel>
+                </GroupBox>
+            </WrapPanel>
+        </ScrollViewer>
+        <WrapPanel
+            Grid.Row="1"
             Margin="10,10,10,0"
-            Padding="10"
-            VerticalAlignment="Top"
-            Header="About this rule">
-            <StackPanel>
-                <Label Content="Name" />
-                <TextBox
-                    x:Name="ruleName"
-                    Height="23"
-                    TextWrapping="Wrap">
-                    <TextBox.Text>
-                        <Binding NotifyOnValidationError="True" Path="Name">
-                            <Binding.ValidationRules>
-                                <validators:RequiredValidation ValidatesOnTargetUpdated="True" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Label Margin="0,10,0,0" Content="Profile to activate" />
-                <Grid Margin="15,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="5" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="5" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <RadioButton
-                        x:Name="profileNumberRadio"
-                        Checked="ProfileNumberRadio_Checked"
-                        Content="Profile number"
-                        IsChecked="{Binding UsesProfileNumber}" />
-                    <mah:NumericUpDown
-                        x:Name="profileNumber"
-                        Grid.Column="2"
-                        Width="100"
-                        HorizontalAlignment="Left"
-                        IsEnabled="{Binding UsesProfileNumber}"
-                        Maximum="32"
-                        Minimum="1">
-                        <mah:NumericUpDown.Value>
-                            <Binding NotifyOnValidationError="True" Path="ProfileNumber">
-                                <Binding.ValidationRules>
-                                    <validators:RangeValidation Maximum="32" Minimum="1" />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </mah:NumericUpDown.Value>
-                    </mah:NumericUpDown>
-                    <RadioButton
-                        x:Name="profileNameRadio"
-                        Grid.Row="2"
-                        Checked="ProfileNameRadio_Checked"
-                        Content="Search by name"
-                        IsChecked="{Binding UsesProfileSearch}" />
-                    <TextBox
-                        x:Name="profileSearchName"
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        Width="150"
-                        HorizontalAlignment="Left"
-                        IsEnabled="{Binding UsesProfileSearch}"
-                        Text="{Binding ProfileName}" />
-                    <RadioButton
-                        Grid.Row="4"
-                        Content="Go to sleep"
-                        IsChecked="{Binding UsesGoToSleep}" />
-                </Grid>
-            </StackPanel>
-        </GroupBox>
-        <WrapPanel Margin="10,10,10,0" HorizontalAlignment="Right">
+            HorizontalAlignment="Right">
             <Button
                 x:Name="save"
                 Width="80"
@@ -120,5 +160,5 @@
                 Content="Cancel"
                 IsCancel="True" />
         </WrapPanel>
-    </StackPanel>
+    </Grid>
 </mah:MetroWindow>

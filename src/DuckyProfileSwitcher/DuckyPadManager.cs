@@ -19,7 +19,6 @@ namespace DuckyProfileSwitcher
         private readonly CancellationTokenSource cancellationTokenSource = new();
         private readonly CancellationToken viewModelLifetimeToken;
 
-        private bool isRunning;
         private bool isConnected;
         private bool isBusy;
         private DuckyPadInfo? info;
@@ -28,11 +27,6 @@ namespace DuckyProfileSwitcher
 
         private DuckyPadManager()
         {
-            if (Environment.GetCommandLineArgs().Any(a => string.Compare("run", a, true) == 0))
-            {
-                IsRunning = true;
-            }
-
             PollConnected();
         }
 
@@ -47,8 +41,6 @@ namespace DuckyProfileSwitcher
         public event EventHandler? IsBusyChanged;
 
         public event EventHandler? IsConnectedChanged;
-
-        public event EventHandler? IsRunningChanged;
 
         public static DuckyPadManager Instance { get; } = new DuckyPadManager();
 
@@ -69,16 +61,6 @@ namespace DuckyProfileSwitcher
             {
                 isConnected = value;
                 IsConnectedChanged?.Invoke(this, new EventArgs());
-            }
-        }
-
-        public bool IsRunning
-        {
-            get => isRunning;
-            set
-            {
-                isRunning = value;
-                IsRunningChanged?.Invoke(this, new EventArgs());
             }
         }
 

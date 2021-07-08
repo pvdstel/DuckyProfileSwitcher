@@ -18,12 +18,12 @@ namespace DuckyProfileSwitcher.ViewModels
             PreviousProfile = new RelayCommand(() => _ = DuckyPadManager.Instance.PreviousProfile(), () => CanSwitchProfile);
             NextProfile = new RelayCommand(() => _ = DuckyPadManager.Instance.NextProfile(), () => CanSwitchProfile);
 
-            DuckyPadManager.Instance.InfoChanged += DuckyPadManagerChange;
-            DuckyPadManager.Instance.IsBusyChanged += DuckyPadManagerChange;
-            DuckyPadManager.Instance.IsConnectedChanged += DuckyPadManagerChange;
-            DuckyPadManager.Instance.IsRunningChanged += DuckyPadManagerChange;
-            DuckyPadManager.Instance.ProfilesChanged += DuckyPadManagerChange;
-            DuckyPadManager.Instance.SelectedProfileChanged += DuckyPadManagerChange;
+            DuckyPadManager.Instance.InfoChanged += ManagerChange;
+            DuckyPadManager.Instance.IsBusyChanged += ManagerChange;
+            DuckyPadManager.Instance.IsConnectedChanged += ManagerChange;
+            DuckyPadManager.Instance.ProfilesChanged += ManagerChange;
+            DuckyPadManager.Instance.SelectedProfileChanged += ManagerChange;
+            SwitchManager.Instance.IsRunningChanged += ManagerChange;
         }
 
         public event EventHandler? Timeout
@@ -46,8 +46,8 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public bool IsRunning
         {
-            get => DuckyPadManager.Instance.IsRunning;
-            set => DuckyPadManager.Instance.IsRunning = value;
+            get => SwitchManager.Instance.IsRunning;
+            set => SwitchManager.Instance.IsRunning = value;
         }
 
         public ImmutableList<DuckyPadProfile>? Profiles
@@ -93,7 +93,7 @@ namespace DuckyProfileSwitcher.ViewModels
             await DuckyPadManager.Instance.RefreshConnected();
         }
 
-        private void DuckyPadManagerChange(object sender, EventArgs e)
+        private void ManagerChange(object sender, EventArgs e)
         {
             PreviousProfile.RaiseCanExecuteChanged();
             NextProfile.RaiseCanExecuteChanged();
@@ -111,12 +111,12 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 if (disposing)
                 {
-                    DuckyPadManager.Instance.InfoChanged -= DuckyPadManagerChange;
-                    DuckyPadManager.Instance.IsBusyChanged -= DuckyPadManagerChange;
-                    DuckyPadManager.Instance.IsConnectedChanged -= DuckyPadManagerChange;
-                    DuckyPadManager.Instance.IsRunningChanged -= DuckyPadManagerChange;
-                    DuckyPadManager.Instance.ProfilesChanged -= DuckyPadManagerChange;
-                    DuckyPadManager.Instance.SelectedProfileChanged -= DuckyPadManagerChange;
+                    DuckyPadManager.Instance.InfoChanged -= ManagerChange;
+                    DuckyPadManager.Instance.IsBusyChanged -= ManagerChange;
+                    DuckyPadManager.Instance.IsConnectedChanged -= ManagerChange;
+                    DuckyPadManager.Instance.ProfilesChanged -= ManagerChange;
+                    DuckyPadManager.Instance.SelectedProfileChanged -= ManagerChange;
+                    SwitchManager.Instance.IsRunningChanged -= ManagerChange;
                 }
 
                 disposedValue = true;
