@@ -2,7 +2,6 @@
     x:Class="DuckyProfileSwitcher.Views.RuleEditor"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="clr-namespace:DuckyProfileSwitcher.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -28,9 +27,6 @@
             <Image Margin="3" Source="{Binding}" />
         </DataTemplate>
     </mah:MetroWindow.IconTemplate>
-    <mah:MetroWindow.Resources>
-        <converters:BooleanNotConverter x:Key="NotConverter" />
-    </mah:MetroWindow.Resources>
 
     <StackPanel>
         <GroupBox
@@ -62,19 +58,21 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="5" />
-                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <RadioButton
                         x:Name="profileNumberRadio"
-                        Checked="profileNumberRadio_Checked"
+                        Checked="ProfileNumberRadio_Checked"
                         Content="Profile number"
-                        IsChecked="{Binding UsesProfileSearch, Converter={StaticResource NotConverter}}" />
+                        IsChecked="{Binding UsesProfileNumber}" />
                     <mah:NumericUpDown
                         x:Name="profileNumber"
                         Grid.Column="2"
                         Width="100"
                         HorizontalAlignment="Left"
-                        IsEnabled="{Binding UsesProfileSearch, Converter={StaticResource NotConverter}}"
+                        IsEnabled="{Binding UsesProfileNumber}"
                         Maximum="32"
                         Minimum="1">
                         <mah:NumericUpDown.Value>
@@ -88,7 +86,7 @@
                     <RadioButton
                         x:Name="profileNameRadio"
                         Grid.Row="2"
-                        Checked="profileNameRadio_Checked"
+                        Checked="ProfileNameRadio_Checked"
                         Content="Search by name"
                         IsChecked="{Binding UsesProfileSearch}" />
                     <TextBox
@@ -99,6 +97,10 @@
                         HorizontalAlignment="Left"
                         IsEnabled="{Binding UsesProfileSearch}"
                         Text="{Binding ProfileName}" />
+                    <RadioButton
+                        Grid.Row="4"
+                        Content="Go to sleep"
+                        IsChecked="{Binding UsesGoToSleep}" />
                 </Grid>
             </StackPanel>
         </GroupBox>

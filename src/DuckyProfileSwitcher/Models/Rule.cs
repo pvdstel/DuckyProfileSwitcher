@@ -14,17 +14,24 @@ namespace DuckyProfileSwitcher.Models
         {
             Id = original.Id;
             Name = original.Name;
-            ProfileDescription = new(original.ProfileDescription);
+            SwitchAction = original.SwitchAction;
             Enabled = original.Enabled;
+            ProfileNumber = original.ProfileNumber;
+            ProfileName = original.ProfileName;
         }
 
         public Guid Id { get; set; }
 
         public string Name { get; set; } = "New rule";
 
-        public ProfileSearchDescription ProfileDescription { get; set; } = new ProfileSearchDescription();
+        public SwitchAction SwitchAction { get; set; } = SwitchAction.SwitchToProfileNumber;
 
         public bool Enabled { get; set; } = true;
+
+        public int? ProfileNumber { get; set; } = 1;
+
+        public string? ProfileName { get; set; }
+
 
         public override bool Equals(object? obj)
         {
@@ -39,7 +46,7 @@ namespace DuckyProfileSwitcher.Models
         public override int GetHashCode()
         {
             int hashCode = -594382924;
-            hashCode = hashCode * -1521134295 + Id.GetHashCode();
+            hashCode = (hashCode * -1521134295) + Id.GetHashCode();
             return hashCode;
         }
 

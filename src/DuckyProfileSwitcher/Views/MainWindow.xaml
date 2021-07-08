@@ -27,7 +27,7 @@
             <Button
                 x:Name="openConfig"
                 Click="OpenConfig_Click"
-                Content="Config_uration" />
+                Content="Configurati_on" />
             <Button
                 x:Name="exitApplication"
                 Click="ExitApplication_Click"
