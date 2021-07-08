@@ -104,28 +104,40 @@ namespace DuckyProfileSwitcher.Views
 
         private async void ExitApplication()
         {
+            void doExit()
+            {
+                allowClose = true;
+                Close();
+            }
+
             if (closeDialogCancellation != null)
             {
                 return;
             }
-            closeDialogCancellation = new CancellationTokenSource();
-            var result = await this.ShowMessageAsync("Exit duckyPad Profile Switcher?", string.Empty, MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings
+            if (ConfigurationManager.Configuration.ConfirmExitApplication)
             {
-                AffirmativeButtonText = "Yes",
-                AnimateHide = false,
-                AnimateShow = false,
-                CancellationToken = closeDialogCancellation.Token,
-                DefaultButtonFocus = MessageDialogResult.Affirmative,
-                DialogResultOnCancel = MessageDialogResult.Canceled,
-                DialogTitleFontSize = 18,
-                NegativeButtonText = "No",
-            });
-            closeDialogCancellation?.Dispose();
-            closeDialogCancellation = null;
-            if (result == MessageDialogResult.Affirmative)
+                closeDialogCancellation = new CancellationTokenSource();
+                var result = await this.ShowMessageAsync("Exit duckyPad Profile Switcher?", string.Empty, MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings
+                {
+                    AffirmativeButtonText = "Yes",
+                    AnimateHide = false,
+                    AnimateShow = false,
+                    CancellationToken = closeDialogCancellation.Token,
+                    DefaultButtonFocus = MessageDialogResult.Affirmative,
+                    DialogResultOnCancel = MessageDialogResult.Canceled,
+                    DialogTitleFontSize = 18,
+                    NegativeButtonText = "No",
+                });
+                closeDialogCancellation?.Dispose();
+                closeDialogCancellation = null;
+                if (result == MessageDialogResult.Affirmative)
+                {
+                    doExit();
+                }
+            }
+            else
             {
-                allowClose = true;
-                Close();
+                doExit();
             }
         }
 
@@ -150,6 +162,11 @@ namespace DuckyProfileSwitcher.Views
         private void ExitApplication_Click(object sender, RoutedEventArgs e)
         {
             ExitApplication();
+        }
+
+        private void OpenConfig_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(ConfigurationManager.ConfigurationFile);
         }
     }
 }

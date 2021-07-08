@@ -133,6 +133,7 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 ConfigurationManager.Configuration.Rules.RemoveAt(index);
                 ConfigurationManager.Configuration.Rules.Insert(index - 1, r);
+                ConfigurationManager.Save();
             }
 
             SelectedRule = sr;
@@ -159,6 +160,7 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 ConfigurationManager.Configuration.Rules.RemoveAt(index);
                 ConfigurationManager.Configuration.Rules.Insert(index + 1, r);
+                ConfigurationManager.Save();
             }
 
             SelectedRule = sr;

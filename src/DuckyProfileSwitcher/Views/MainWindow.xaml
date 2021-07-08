@@ -25,6 +25,10 @@
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button
+                x:Name="openConfig"
+                Click="OpenConfig_Click"
+                Content="Config_uration" />
+            <Button
                 x:Name="exitApplication"
                 Click="ExitApplication_Click"
                 Content="_Quit app"
