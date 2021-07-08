@@ -1,4 +1,5 @@
 ﻿using DuckyProfileSwitcher.Models;
+using DuckyProfileSwitcher.Validators;
 using DuckyProfileSwitcher.ViewModels;
 using System.Threading.Tasks;
 
@@ -21,6 +22,8 @@ namespace DuckyProfileSwitcher.Views
 
         private async void Window_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
+            ruleNameBinding.ValidationRules.Add(new RequiredValidation());
+            profileNumberBinding.ValidationRules.Add(new RangeValidation { Minimum = 1, Maximum = 32 });
             ruleName.Focus();
             await Task.Delay(100);
             ruleName.SelectAll();
