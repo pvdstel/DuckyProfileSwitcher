@@ -17,7 +17,7 @@ namespace DuckyProfileSwitcher
         private const int ProfileRetrievalCount = 6;
 
         private readonly CancellationTokenSource cancellationTokenSource = new();
-        private readonly CancellationToken viewModelLifetimeToken;
+        private readonly CancellationToken lifetimeToken;
 
         private bool isConnected;
         private bool isBusy;
@@ -113,7 +113,7 @@ namespace DuckyProfileSwitcher
 
         public async Task SetProfile(DuckyPadProfile profile)
         {
-            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+            using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
             if (!IsConnected || profile == SelectedProfile)
             {
                 return;
@@ -132,7 +132,7 @@ namespace DuckyProfileSwitcher
 
         public async Task PreviousProfile()
         {
-            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+            using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
             if (!IsConnected)
             {
                 return;
@@ -149,7 +149,7 @@ namespace DuckyProfileSwitcher
 
         public async Task NextProfile()
         {
-            using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+            using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
             if (!IsConnected)
             {
                 return;
@@ -168,7 +168,7 @@ namespace DuckyProfileSwitcher
         {
             if (IsConnected)
             {
-                using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+                using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
                 await RunCatchDuckyPadException(async () =>
                 {
                     var info = await DuckyPadCommunication.GetDuckyPadInfo(ltct.Token);
@@ -182,7 +182,7 @@ namespace DuckyProfileSwitcher
         {
             if (IsConnected)
             {
-                using var ltct = new LinkedTimeoutCancellationToken(viewModelLifetimeToken, ActionCancellationTimeMS);
+                using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
                 await RunCatchDuckyPadException(async () =>
                 {
                     var r = await DuckyPadCommunication.ListFiles(ltct.Token);
@@ -224,7 +224,7 @@ namespace DuckyProfileSwitcher
         private async void PollConnected()
         {
             int i = 0;
-            while (!viewModelLifetimeToken.IsCancellationRequested)
+            while (!lifetimeToken.IsCancellationRequested)
             {
                 await RefreshConnected();
                 ++i;

@@ -9,7 +9,7 @@ namespace DuckyProfileSwitcher
     {
         private readonly ActiveWindowListener windowListener;
         private bool isRunning;
-        private ActiveWindowListener.ActiveWindowChangedEventArgs activeWindow;
+        private ActiveWindowListener.ActiveWindowChangedEventArgs? activeWindow;
 
         private SwitchManager()
         {
@@ -38,7 +38,7 @@ namespace DuckyProfileSwitcher
 
         private async void UpdateProfile()
         {
-            if (!IsRunning)
+            if (!IsRunning || activeWindow == null)
             {
                 return;
             }
@@ -90,7 +90,7 @@ namespace DuckyProfileSwitcher
                     {
                         break;
                     }
-                    DuckyPadProfile? profileFromLabel = DuckyPadManager.Instance.Profiles.FirstOrDefault(p => p.Name.ToUpper().Contains(uNameSearch));
+                    DuckyPadProfile? profileFromLabel = DuckyPadManager.Instance.Profiles?.FirstOrDefault(p => p.Name.ToUpper().Contains(uNameSearch));
                     if (profileFromLabel != null)
                     {
                         await DuckyPadManager.Instance.SetProfile(profileFromLabel);
