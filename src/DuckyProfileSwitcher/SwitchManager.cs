@@ -9,7 +9,7 @@ namespace DuckyProfileSwitcher
     {
         private readonly ActiveWindowListener windowListener;
         private bool isRunning;
-        private ActiveWindowListener.ActiveWindowChangedEventArgs? activeWindow;
+        private ActiveWindowChangedEventArgs? activeWindow;
 
         private SwitchManager()
         {
@@ -88,7 +88,7 @@ namespace DuckyProfileSwitcher
             }
         }
 
-        private void WindowListener_ActiveWindowChanged(object sender, ActiveWindowListener.ActiveWindowChangedEventArgs e)
+        private void WindowListener_ActiveWindowChanged(object sender, ActiveWindowChangedEventArgs e)
         {
             Debug.WriteLine(e);
             activeWindow = e;

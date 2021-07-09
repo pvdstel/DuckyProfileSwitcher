@@ -35,125 +35,145 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer Padding="10" VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="10" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <GroupBox Padding="10,5,10,10" Header="About this rule">
-                    <StackPanel>
-                        <Label Content="Name" />
-                        <TextBox x:Name="ruleName" TextWrapping="Wrap">
-                            <TextBox.Text>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="10" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <GroupBox Padding="10,5,10,10" Header="About this rule">
+                <StackPanel>
+                    <Label Content="Name" />
+                    <TextBox x:Name="ruleName" TextWrapping="Wrap">
+                        <TextBox.Text>
+                            <Binding
+                                x:Name="ruleNameBinding"
+                                NotifyOnValidationError="True"
+                                Path="Name" />
+                        </TextBox.Text>
+                    </TextBox>
+                    <Label Margin="0,10,0,0" Content="Profile to activate" />
+                    <Grid Margin="15,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <RadioButton
+                            x:Name="profileNumberRadio"
+                            Checked="ProfileNumberRadio_Checked"
+                            Content="Profile number"
+                            IsChecked="{Binding UsesProfileNumber}" />
+                        <mah:NumericUpDown
+                            x:Name="profileNumber"
+                            Grid.Column="2"
+                            Width="100"
+                            HorizontalAlignment="Left"
+                            IsEnabled="{Binding UsesProfileNumber}"
+                            Maximum="32"
+                            Minimum="1">
+                            <mah:NumericUpDown.Value>
                                 <Binding
-                                    x:Name="ruleNameBinding"
+                                    x:Name="profileNumberBinding"
                                     NotifyOnValidationError="True"
-                                    Path="Name" />
-                            </TextBox.Text>
-                        </TextBox>
-                        <Label Margin="0,10,0,0" Content="Profile to activate" />
-                        <Grid Margin="15,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="10" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="5" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="5" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <RadioButton
-                                x:Name="profileNumberRadio"
-                                Checked="ProfileNumberRadio_Checked"
-                                Content="Profile number"
-                                IsChecked="{Binding UsesProfileNumber}" />
-                            <mah:NumericUpDown
-                                x:Name="profileNumber"
-                                Grid.Column="2"
-                                Width="100"
-                                HorizontalAlignment="Left"
-                                IsEnabled="{Binding UsesProfileNumber}"
-                                Maximum="32"
-                                Minimum="1">
-                                <mah:NumericUpDown.Value>
-                                    <Binding
-                                        x:Name="profileNumberBinding"
-                                        NotifyOnValidationError="True"
-                                        Path="ProfileNumber"
-                                        UpdateSourceTrigger="PropertyChanged" />
-                                </mah:NumericUpDown.Value>
-                            </mah:NumericUpDown>
-                            <Label
-                                Grid.Row="1"
-                                Grid.Column="2"
-                                Content="This profile was not found."
-                                Foreground="{DynamicResource MahApps.Brushes.SystemControlErrorTextForeground}"
-                                Visibility="{Binding ProfileNumberNotFound, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
-                            <RadioButton
-                                x:Name="profileNameRadio"
-                                Grid.Row="3"
-                                Checked="ProfileNameRadio_Checked"
-                                Content="Search by name"
-                                IsChecked="{Binding UsesProfileSearch}" />
-                            <ComboBox
-                                x:Name="profileSearchName"
-                                Grid.Row="3"
-                                Grid.Column="2"
-                                Width="150"
-                                HorizontalAlignment="Left"
-                                mah:TextBoxHelper.Watermark="Part of profile name"
-                                IsEditable="True"
-                                IsEnabled="{Binding UsesProfileSearch}"
-                                ItemsSource="{Binding ProfileNames}"
-                                StaysOpenOnEdit="True"
-                                Text="{Binding ProfileName, UpdateSourceTrigger=PropertyChanged}" />
-                            <Label
-                                Grid.Row="4"
-                                Grid.Column="2"
-                                Content="This profile was not found."
-                                Foreground="{DynamicResource MahApps.Brushes.SystemControlErrorTextForeground}"
-                                Visibility="{Binding ProfileNameNotFound, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
-                            <RadioButton
-                                Grid.Row="6"
-                                Content="Go to sleep"
-                                IsChecked="{Binding UsesGoToSleep}" />
-                            <TextBox
-                                Grid.Row="6"
-                                Grid.Column="2"
-                                Visibility="Hidden" />
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox
-                    Grid.Row="2"
-                    Padding="10,5,10,10"
-                    Header="Active application">
-                    <StackPanel>
-                        <Label Content="Application name (without .exe, case insensitive)" />
-                        <TextBox Text="{Binding AppName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
-                        <Label Content="Window title must contain (case insensitive)" />
-                        <TextBox Text="{Binding WindowTitle, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
-                        <Label Content="Window class must be (exactly)" />
-                        <TextBox Text="{Binding WindowClass, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
-                    </StackPanel>
-                </GroupBox>
-            </Grid>
-        </ScrollViewer>
+                                    Path="ProfileNumber"
+                                    UpdateSourceTrigger="PropertyChanged" />
+                            </mah:NumericUpDown.Value>
+                        </mah:NumericUpDown>
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Content="This profile was not found."
+                            Foreground="{DynamicResource MahApps.Brushes.SystemControlErrorTextForeground}"
+                            Visibility="{Binding ProfileNumberNotFound, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                        <RadioButton
+                            x:Name="profileNameRadio"
+                            Grid.Row="3"
+                            Checked="ProfileNameRadio_Checked"
+                            Content="Search by name"
+                            IsChecked="{Binding UsesProfileSearch}" />
+                        <ComboBox
+                            x:Name="profileSearchName"
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Width="150"
+                            HorizontalAlignment="Left"
+                            mah:TextBoxHelper.Watermark="Part of profile name"
+                            IsEditable="True"
+                            IsEnabled="{Binding UsesProfileSearch}"
+                            ItemsSource="{Binding ProfileNames}"
+                            StaysOpenOnEdit="True"
+                            Text="{Binding ProfileName, UpdateSourceTrigger=PropertyChanged}" />
+                        <Label
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Content="This profile was not found."
+                            Foreground="{DynamicResource MahApps.Brushes.SystemControlErrorTextForeground}"
+                            Visibility="{Binding ProfileNameNotFound, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                        <RadioButton
+                            Grid.Row="6"
+                            Content="Go to sleep"
+                            IsChecked="{Binding UsesGoToSleep}" />
+                        <TextBox
+                            Grid.Row="6"
+                            Grid.Column="2"
+                            Visibility="Hidden" />
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox
+                Grid.Row="2"
+                Padding="10,5,10,10"
+                Header="Active application">
+                <StackPanel>
+                    <Label Content="Application name (without .exe, case insensitive)" />
+                    <TextBox Text="{Binding AppName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
+                    <Label Content="Window title must contain (case insensitive)" />
+                    <TextBox Text="{Binding WindowTitle, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
+                    <Label Content="Window class must be (exactly)" />
+                    <TextBox Text="{Binding WindowClass, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" />
+                </StackPanel>
+            </GroupBox>
+            <GroupBox
+                Grid.RowSpan="3"
+                Grid.Column="2"
+                Padding="0"
+                Header="Open windows">
+                <Grid>
+                    <ListView x:Name="openWindowsList">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn
+                                    Width="255"
+                                    DisplayMemberBinding="{Binding Title}"
+                                    Header="Title" />
+                                <GridViewColumn
+                                    Width="100"
+                                    DisplayMemberBinding="{Binding ProcessName}"
+                                    Header="App name" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </GroupBox>
+        </Grid>
         <WrapPanel
             Grid.Row="1"
-            Margin="10,10,10,0"
+            Margin="10,0,10,0"
             HorizontalAlignment="Right">
             <Button
                 x:Name="save"

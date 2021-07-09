@@ -2,6 +2,7 @@
 using DuckyProfileSwitcher.Validators;
 using DuckyProfileSwitcher.ViewModels;
 using MahApps.Metro.Controls;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -29,6 +30,18 @@ namespace DuckyProfileSwitcher.Views
             ruleName.Focus();
             await Task.Delay(100);
             ruleName.SelectAll();
+            await Task.Run(() =>
+            {
+                var windows = ActiveWindowListener.GetWindows()
+                    //.Where(w => w.ProcessName != "DuckyProfileSwitcher")
+                    .Distinct()
+                    .OrderBy(w => w.ProcessName).ThenBy(w => w.Title)
+                    .ToList();
+                Dispatcher.Invoke(() =>
+                {
+                    openWindowsList.ItemsSource = windows;
+                });
+            });
         }
 
         private void SaveButton_Click(object sender, System.Windows.RoutedEventArgs e)

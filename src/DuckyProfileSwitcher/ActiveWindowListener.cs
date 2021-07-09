@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -26,63 +27,9 @@ namespace DuckyProfileSwitcher
         }
 
         private delegate void WINEVENTPROC(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         public event EventHandler<ActiveWindowChangedEventArgs>? ActiveWindowChanged;
-
-        public class ActiveWindowChangedEventArgs : EventArgs, IEquatable<ActiveWindowChangedEventArgs?>
-        {
-            public ActiveWindowChangedEventArgs(IntPtr handle, string title, string processName, string className)
-            {
-                Handle = handle;
-                Title = title;
-                ProcessName = processName;
-                ClassName = className;
-            }
-
-            public IntPtr Handle { get; }
-            public string Title { get; }
-            public string ProcessName { get; }
-            public string ClassName { get; }
-
-            public override bool Equals(object? obj)
-            {
-                return Equals(obj as ActiveWindowChangedEventArgs);
-            }
-
-            public bool Equals(ActiveWindowChangedEventArgs? other)
-            {
-                return other != null &&
-                       EqualityComparer<IntPtr>.Default.Equals(Handle, other.Handle) &&
-                       Title == other.Title &&
-                       ProcessName == other.ProcessName &&
-                       ClassName == other.ClassName;
-            }
-
-            public override int GetHashCode()
-            {
-                int hashCode = -1308394375;
-                hashCode = hashCode * -1521134295 + Handle.GetHashCode();
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Title);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ProcessName);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ClassName);
-                return hashCode;
-            }
-
-            public override string ToString()
-            {
-                return $"{{Handle: {Handle}, Title: '{Title}', ProcessName: '{ProcessName}', ClassName: '{ClassName}'}}";
-            }
-
-            public static bool operator ==(ActiveWindowChangedEventArgs? left, ActiveWindowChangedEventArgs? right)
-            {
-                return EqualityComparer<ActiveWindowChangedEventArgs>.Default.Equals(left!, right!);
-            }
-
-            public static bool operator !=(ActiveWindowChangedEventArgs? left, ActiveWindowChangedEventArgs? right)
-            {
-                return !(left == right);
-            }
-        }
 
         [DllImport("user32.dll")]
         private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WINEVENTPROC lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
@@ -102,6 +49,28 @@ namespace DuckyProfileSwitcher
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        public static ImmutableList<WindowDescription> GetWindows()
+        {
+            List<WindowDescription> result = new();
+            EnumWindows((IntPtr hWnd, IntPtr lParam) =>
+            {
+                if (IsWindowVisible(hWnd))
+                {
+                    result.Add(new WindowDescription(ManagedGetWindowText(hWnd), GetWindowProcessName(hWnd)));
+                }
+                return true;
+            }, IntPtr.Zero);
+            return result.ToImmutableList();
+        }
+
         private static string ManagedGetWindowText(IntPtr hWnd)
         {
             int length = GetWindowTextLength(hWnd);
@@ -118,14 +87,27 @@ namespace DuckyProfileSwitcher
             return text.ToString();
         }
 
+        private static string GetWindowProcessName(IntPtr hWnd)
+        {
+            try
+            {
+                _ = GetWindowThreadProcessId(hWnd, out uint procId);
+                var process = Process.GetProcessById((int)procId);
+                string processName = process.ProcessName;
+                return processName;
+            }
+            catch (ArgumentException)
+            {
+                return string.Empty;
+            }
+        }
+
         private void Refresh()
         {
             IntPtr foregroundWindow = GetForegroundWindow();
             string title = ManagedGetWindowText(foregroundWindow);
             string className = ManagedGetWindowClassName(foregroundWindow);
-            _ = GetWindowThreadProcessId(foregroundWindow, out uint procId);
-            var process = Process.GetProcessById((int)procId);
-            string processName = process.ProcessName;
+            string processName = GetWindowProcessName(foregroundWindow); ;
             ActiveWindowChangedEventArgs window = new(foregroundWindow, title, processName, className);
             if (window != activeWindow)
             {
@@ -136,13 +118,7 @@ namespace DuckyProfileSwitcher
 
         private void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
-            try
-            {
-                Refresh();
-            }
-            catch (ArgumentException)
-            {
-            }
+            Refresh();
         }
 
         private async void PollConnected()
