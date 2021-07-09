@@ -92,7 +92,7 @@ namespace DuckyProfileSwitcher
             try
             {
                 _ = GetWindowThreadProcessId(hWnd, out uint procId);
-                Process? process = Process.GetProcessById((int)procId);
+                using Process? process = Process.GetProcessById((int)procId);
                 string processName = process.ProcessName ?? string.Empty;
                 return processName;
             }
