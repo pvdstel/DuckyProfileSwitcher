@@ -64,8 +64,8 @@
                         Header="Name" />
                     <GridViewColumn
                         Width="100"
-                        DisplayMemberBinding="{Binding ProfileDescription}"
-                        Header="Profile" />
+                        DisplayMemberBinding="{Binding ActionDescription}"
+                        Header="Action" />
                 </GridView>
             </ListView.View>
         </ListView>

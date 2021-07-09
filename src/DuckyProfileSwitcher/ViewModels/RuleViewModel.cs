@@ -45,6 +45,14 @@ namespace DuckyProfileSwitcher.ViewModels
             }
         }
 
+        public string ActionDescription => Rule.SwitchAction switch
+        {
+            SwitchAction.Sleep => "Sleep",
+            SwitchAction.SwitchToProfileNumber => $"Go to {Rule.ProfileNumber}",
+            SwitchAction.SwitchToProfileName => $"Go to {Rule.ProfileName}",
+            _ => "(unknown)",
+        };
+
         public bool UsesGoToSleep
         {
             get => Rule.SwitchAction == SwitchAction.Sleep;
@@ -54,6 +62,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(UsesProfileNumber));
                 OnPropertyChanged(nameof(UsesProfileSearch));
+                OnPropertyChanged(nameof(ActionDescription));
                 CommitAndSave();
             }
         }
@@ -69,6 +78,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged(nameof(UsesProfileSearch));
                 OnPropertyChanged(nameof(ProfileNumberNotFound));
                 OnPropertyChanged(nameof(ProfileNameNotFound));
+                OnPropertyChanged(nameof(ActionDescription));
                 CommitAndSave();
             }
         }
@@ -84,6 +94,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged(nameof(UsesProfileNumber));
                 OnPropertyChanged(nameof(ProfileNumberNotFound));
                 OnPropertyChanged(nameof(ProfileNameNotFound));
+                OnPropertyChanged(nameof(ActionDescription));
                 CommitAndSave();
             }
         }
@@ -96,6 +107,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 Rule.ProfileNumber = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ProfileNumberNotFound));
+                OnPropertyChanged(nameof(ActionDescription));
                 CommitAndSave();
             }
         }
@@ -110,6 +122,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 Rule.ProfileName = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ProfileNameNotFound));
+                OnPropertyChanged(nameof(ActionDescription));
                 CommitAndSave();
             }
         }
