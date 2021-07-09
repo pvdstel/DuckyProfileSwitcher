@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DuckyProfileSwitcher.Models
 {
@@ -40,6 +41,23 @@ namespace DuckyProfileSwitcher.Models
         public string? WindowTitle { get; set; }
 
         public string? WindowClass { get; set; }
+
+        public DuckyPadProfile? FindProfile()
+        {
+            switch (SwitchAction)
+            {
+                case SwitchAction.SwitchToProfileNumber:
+                    return DuckyPadManager.Instance.Profiles?.FirstOrDefault(p => p.Number == ProfileNumber);
+                case SwitchAction.SwitchToProfileName:
+                    string? uNameSearch = ProfileName?.ToUpper();
+                    if (string.IsNullOrEmpty(uNameSearch))
+                    {
+                        break;
+                    }
+                    return DuckyPadManager.Instance.Profiles?.FirstOrDefault(p => p.Name.ToUpper().Contains(uNameSearch));
+            }
+            return null;
+        }
 
         public override bool Equals(object? obj)
         {

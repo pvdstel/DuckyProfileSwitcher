@@ -78,19 +78,8 @@ namespace DuckyProfileSwitcher
                 case SwitchAction.Sleep:
                     break;
                 case SwitchAction.SwitchToProfileNumber:
-                    DuckyPadProfile? profileFromNumber = DuckyPadManager.Instance.Profiles?.FirstOrDefault(p => p.Number == selectedRule.ProfileNumber);
-                    if (profileFromNumber != null)
-                    {
-                        await DuckyPadManager.Instance.SetProfile(profileFromNumber);
-                    }
-                    break;
                 case SwitchAction.SwitchToProfileName:
-                    string? uNameSearch = selectedRule.ProfileName?.ToUpper();
-                    if (string.IsNullOrEmpty(uNameSearch))
-                    {
-                        break;
-                    }
-                    DuckyPadProfile? profileFromLabel = DuckyPadManager.Instance.Profiles?.FirstOrDefault(p => p.Name.ToUpper().Contains(uNameSearch));
+                    DuckyPadProfile? profileFromLabel = selectedRule.FindProfile();
                     if (profileFromLabel != null)
                     {
                         await DuckyPadManager.Instance.SetProfile(profileFromLabel);
