@@ -13,10 +13,10 @@
         }
 
         public byte Major { get; }
-        
+
         public byte Minor { get; }
 
-        public byte Patch { get; } 
+        public byte Patch { get; }
 
         public byte Model { get; }
 

@@ -2,7 +2,7 @@
 
 namespace DuckyProfileSwitcher.Utilities
 {
-    static class ListUtilities
+    internal static class ListUtilities
     {
         public static void ReplaceWith<T>(this IList<T> list, T existingRule, T newRule)
         {

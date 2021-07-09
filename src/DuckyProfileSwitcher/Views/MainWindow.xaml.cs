@@ -58,10 +58,7 @@ namespace DuckyProfileSwitcher.Views
             notifyIcon.Text = "duckyPad Profile Switcher";
             notifyIcon.Icon = new System.Drawing.Icon(iconStream);
             notifyIcon.Visible = true;
-            notifyIcon.Click += (sender, e) =>
-            {
-                Show();
-            };
+            notifyIcon.Click += (sender, e) => Show();
             MenuItem runningToggle = new("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             MenuItem goToProfile = new("Go to", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
@@ -70,7 +67,7 @@ namespace DuckyProfileSwitcher.Views
                 runningToggle,
                 goToProfile,
                 new MenuItem("-"),
-                new MenuItem("Exit", (s, e) => ExitApplication()) {  },
+                new MenuItem("Exit", (s, e) => ExitApplication()),
             });
             notifyIcon.ContextMenu.Popup += (s, e) =>
             {
@@ -127,7 +124,7 @@ namespace DuckyProfileSwitcher.Views
                     DialogResultOnCancel = MessageDialogResult.Canceled,
                     DialogTitleFontSize = 18,
                     NegativeButtonText = "No",
-                });
+                }).ConfigureAwait(false);
                 closeDialogCancellation?.Dispose();
                 closeDialogCancellation = null;
                 if (result == MessageDialogResult.Affirmative)

@@ -28,8 +28,8 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public event EventHandler? Timeout
         {
-            add { DuckyPadManager.Instance.Timeout += value; } 
-            remove { DuckyPadManager.Instance.Timeout -= value; } 
+            add { DuckyPadManager.Instance.Timeout += value; }
+            remove { DuckyPadManager.Instance.Timeout -= value; }
         }
 
         public bool IsBusy
@@ -70,7 +70,7 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public async void SetProfile(DuckyPadProfile profile)
         {
-            await DuckyPadManager.Instance.SetProfile(profile);
+            await DuckyPadManager.Instance.SetProfile(profile).ConfigureAwait(false);
         }
 
         public string DuckyPadDetails
@@ -89,8 +89,8 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public async void DeviceChange()
         {
-            await Task.Delay(DeviceChangeDelay);
-            await DuckyPadManager.Instance.RefreshConnected();
+            await Task.Delay(DeviceChangeDelay).ConfigureAwait(false);
+            await DuckyPadManager.Instance.RefreshConnected().ConfigureAwait(false);
         }
 
         private void ManagerChange(object sender, EventArgs e)

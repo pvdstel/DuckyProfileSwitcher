@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DuckyProfileSwitcher
 {
-    public class SwitchManager
+    public sealed class SwitchManager
     {
         private readonly ActiveWindowListener windowListener;
         private bool isRunning;
@@ -30,7 +30,7 @@ namespace DuckyProfileSwitcher
             set
             {
                 isRunning = value;
-                IsRunningChanged?.Invoke(null, new EventArgs());
+                IsRunningChanged?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -56,7 +56,7 @@ namespace DuckyProfileSwitcher
                     return false;
                 }
 
-                if (!string.IsNullOrEmpty(r.WindowTitle) && !activeWindow.Title.ToUpper().Contains(r.WindowTitle!.ToUpper()))
+                if (!string.IsNullOrEmpty(r.WindowTitle) && activeWindow.Title.IndexOf(r.WindowTitle!, StringComparison.OrdinalIgnoreCase) < 0)
                 {
                     return false;
                 }
@@ -82,7 +82,7 @@ namespace DuckyProfileSwitcher
                     DuckyPadProfile? profileFromLabel = selectedRule.FindProfile();
                     if (profileFromLabel != null)
                     {
-                        await DuckyPadManager.Instance.SetProfile(profileFromLabel);
+                        await DuckyPadManager.Instance.SetProfile(profileFromLabel).ConfigureAwait(false);
                     }
                     break;
             }

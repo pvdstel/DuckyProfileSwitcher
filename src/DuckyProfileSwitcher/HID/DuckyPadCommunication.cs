@@ -124,7 +124,7 @@ namespace DuckyProfileSwitcher.HID
                 }
 
                 List<(string name, DuckyPadFileType type)> result = new();
-                DuckyPadResponse duckyPadResponse = await WriteReceive(message, cancellationToken);
+                DuckyPadResponse duckyPadResponse = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
                 while (true)
                 {
                     ThrowIfError(duckyPadResponse);
@@ -154,7 +154,7 @@ namespace DuckyProfileSwitcher.HID
                     result.Add((filename, type));
 
                     DuckyPadMessage resume = new(0, DuckyPadCommand.Resume);
-                    duckyPadResponse = await WriteReceive(resume, cancellationToken);
+                    duckyPadResponse = await WriteReceive(resume, cancellationToken).ConfigureAwait(false);
                 }
 
                 return result.ToImmutableList();

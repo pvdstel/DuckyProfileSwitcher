@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace DuckyProfileSwitcher.HID
 {
-    class DeviceListener : IDisposable
+    internal class DeviceListener : IDisposable
     {
         public const int WM_DEVICECHANGE = 0x0219;
-        public const int DBT_DEVICEARRIVAL = 0x8000;         
+        public const int DBT_DEVICEARRIVAL = 0x8000;
         public const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
         public const int DBT_DEVNODES_CHANGED = 0x0007;
 
@@ -28,7 +28,6 @@ namespace DuckyProfileSwitcher.HID
             //IntPtr buffer = Marshal.AllocHGlobal(dbi.Size);
             //Marshal.StructureToPtr(dbi, buffer, true);
             notificationHandle = RegisterDeviceNotification(windowHandle, dbi, 0);
-
         }
 
         public void UnregisterDeviceNotification()

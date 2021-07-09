@@ -60,7 +60,7 @@ namespace DuckyProfileSwitcher
         public static ImmutableList<WindowDescription> GetWindows()
         {
             List<WindowDescription> result = new();
-            EnumWindows((IntPtr hWnd, IntPtr lParam) =>
+            EnumWindows((IntPtr hWnd, IntPtr _) =>
             {
                 if (IsWindowVisible(hWnd))
                 {
@@ -81,7 +81,7 @@ namespace DuckyProfileSwitcher
 
         private static string ManagedGetWindowClassName(IntPtr hWnd)
         {
-            int length = 40;
+            const int length = 40;
             StringBuilder text = new(length);
             _ = GetClassName(hWnd, text, length + 1);
             return text.ToString();
@@ -92,8 +92,8 @@ namespace DuckyProfileSwitcher
             try
             {
                 _ = GetWindowThreadProcessId(hWnd, out uint procId);
-                var process = Process.GetProcessById((int)procId);
-                string processName = process.ProcessName;
+                Process? process = Process.GetProcessById((int)procId);
+                string processName = process.ProcessName ?? string.Empty;
                 return processName;
             }
             catch (ArgumentException)
@@ -107,7 +107,7 @@ namespace DuckyProfileSwitcher
             IntPtr foregroundWindow = GetForegroundWindow();
             string title = ManagedGetWindowText(foregroundWindow);
             string className = ManagedGetWindowClassName(foregroundWindow);
-            string processName = GetWindowProcessName(foregroundWindow); ;
+            string processName = GetWindowProcessName(foregroundWindow);
             ActiveWindowChangedEventArgs window = new(foregroundWindow, title, processName, className);
             if (window != activeWindow)
             {
@@ -126,7 +126,7 @@ namespace DuckyProfileSwitcher
             while (!lifetimeToken.IsCancellationRequested)
             {
                 Refresh();
-                await Task.Delay(PollingDelayMS);
+                await Task.Delay(PollingDelayMS).ConfigureAwait(false);
             }
         }
     }

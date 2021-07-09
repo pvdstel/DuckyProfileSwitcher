@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace DuckyProfileSwitcher.Utilities
 {
-    class LinkedTimeoutCancellationToken : IDisposable
+    internal class LinkedTimeoutCancellationToken : IDisposable
     {
         private readonly CancellationTokenSource cancellationTokenSource;
         private readonly CancellationTokenRegistration registration;
@@ -11,10 +11,7 @@ namespace DuckyProfileSwitcher.Utilities
         public LinkedTimeoutCancellationToken(CancellationToken cancellationToken, int timeoutMs)
         {
             cancellationTokenSource = new CancellationTokenSource(timeoutMs);
-            registration = cancellationToken.Register(() =>
-            {
-                cancellationTokenSource.Cancel();
-            });
+            registration = cancellationToken.Register(() => cancellationTokenSource.Cancel());
         }
 
         public CancellationToken Token => cancellationTokenSource.Token;

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace DuckyProfileSwitcher.Validators
 {
-    class RequiredValidation : ValidationRule
+    internal class RequiredValidation : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {

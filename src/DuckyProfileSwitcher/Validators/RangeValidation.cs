@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace DuckyProfileSwitcher.Validators
 {
-    class RangeValidation : ValidationRule
+    internal class RangeValidation : ValidationRule
     {
         public double Minimum { get; set; }
 

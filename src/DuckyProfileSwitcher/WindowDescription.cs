@@ -30,8 +30,8 @@ namespace DuckyProfileSwitcher
         public override int GetHashCode()
         {
             int hashCode = 1512247762;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Title);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(ProcessName);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(Title);
+            hashCode = (hashCode * -1521134295) + EqualityComparer<string>.Default.GetHashCode(ProcessName);
             return hashCode;
         }
 

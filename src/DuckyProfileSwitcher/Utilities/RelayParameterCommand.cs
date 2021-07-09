@@ -49,7 +49,7 @@ namespace DuckyProfileSwitcher.Utilities
 
         public void RaiseCanExecuteChanged()
         {
-            CanExecuteChangedInternal?.Invoke(this, new EventArgs());
+            CanExecuteChangedInternal?.Invoke(this, EventArgs.Empty);
         }
 
         public void Execute(object parameter)
