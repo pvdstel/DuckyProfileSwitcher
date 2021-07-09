@@ -19,6 +19,13 @@ namespace DuckyProfileSwitcher.HID
         private const int ProcessingDelayMS = 300;
 
         private static readonly SemaphoreSlim semaphoreSlim = new(1, 1);
+        private static IDevice? duckyHidDevice;
+
+        public static void InvalidateDeviceCache()
+        {
+            duckyHidDevice?.Dispose();
+            duckyHidDevice = null;
+        }
 
         public static async Task<bool> IsConnected(CancellationToken cancellationToken)
         {
@@ -173,7 +180,7 @@ namespace DuckyProfileSwitcher.HID
         /// <returns>The response from the device.</returns>
         private static async Task<DuckyPadResponse> WriteReceive(DuckyPadMessage message, CancellationToken cancellationToken)
         {
-            using IDevice? duckyPad = await FindDuckyPad(cancellationToken);
+            IDevice? duckyPad = await FindDuckyPad(cancellationToken);
             byte[]? messageBytes = message.GetBytes();
             TransferResult hidResponse = await duckyPad.WriteAndReadAsync(messageBytes, cancellationToken);
             byte[]? responseBytes = hidResponse.Data;
@@ -203,6 +210,11 @@ namespace DuckyProfileSwitcher.HID
         /// <returns>The duckyPad HID counted buffer device.</returns>
         private static async Task<IDevice> FindDuckyPad(CancellationToken cancellationToken)
         {
+            if (duckyHidDevice != null)
+            {
+                return duckyHidDevice;
+            }
+
             IDeviceFactory? hidFactory = new FilterDeviceDefinition(productId: ProductID)
                 .CreateWindowsHidDeviceFactory(readBufferSize: DuckyPadResponse.TotalSize, writeBufferSize: DuckyPadMessage.TotalSize);
 
@@ -218,6 +230,7 @@ namespace DuckyProfileSwitcher.HID
 
             IDevice? duckyPad = await hidFactory.GetDeviceAsync(deviceDefinition, cancellationToken);
             await duckyPad.InitializeAsync(cancellationToken);
+            duckyHidDevice = duckyPad;
 
             return duckyPad;
         }

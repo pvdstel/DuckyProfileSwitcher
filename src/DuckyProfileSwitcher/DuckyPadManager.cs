@@ -94,6 +94,11 @@ namespace DuckyProfileSwitcher
             }
         }
 
+        public static void InvalidateDeviceCache()
+        {
+            DuckyPadCommunication.InvalidateDeviceCache();
+        }
+
         public async Task RefreshConnected()
         {
             bool nextIsConnected = await DuckyPadCommunication.IsConnected(cancellationTokenSource.Token);
