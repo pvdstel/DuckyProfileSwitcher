@@ -20,6 +20,9 @@
     WindowStartupLocation="CenterOwner"
     WindowTitleBrush="#333"
     mc:Ignorable="d">
+    <mah:MetroWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </mah:MetroWindow.Resources>
 
     <mah:MetroWindow.IconTemplate>
         <DataTemplate>
@@ -35,9 +38,9 @@
         <ScrollViewer Padding="10" VerticalScrollBarVisibility="Auto">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="10" />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -64,7 +67,9 @@
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="5" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="5" />
                                 <RowDefinition Height="Auto" />
@@ -90,26 +95,38 @@
                                         UpdateSourceTrigger="PropertyChanged" />
                                 </mah:NumericUpDown.Value>
                             </mah:NumericUpDown>
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Content="This profile was not found."
+                                Foreground="{DynamicResource MahApps.Brushes.SystemControlErrorTextForeground}"
+                                Visibility="{Binding ProfileNumberNotFound, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
                             <RadioButton
                                 x:Name="profileNameRadio"
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Checked="ProfileNameRadio_Checked"
                                 Content="Search by name"
                                 IsChecked="{Binding UsesProfileSearch}" />
                             <TextBox
                                 x:Name="profileSearchName"
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Grid.Column="2"
                                 Width="150"
                                 HorizontalAlignment="Left"
                                 IsEnabled="{Binding UsesProfileSearch}"
                                 Text="{Binding ProfileName, UpdateSourceTrigger=PropertyChanged}" />
-                            <RadioButton
+                            <Label
                                 Grid.Row="4"
+                                Grid.Column="2"
+                                Content="This profile was not found."
+                                Foreground="{DynamicResource MahApps.Brushes.SystemControlErrorTextForeground}"
+                                Visibility="{Binding ProfileNameNotFound, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                            <RadioButton
+                                Grid.Row="6"
                                 Content="Go to sleep"
                                 IsChecked="{Binding UsesGoToSleep}" />
                             <TextBox
-                                Grid.Row="4"
+                                Grid.Row="6"
                                 Grid.Column="2"
                                 Visibility="Hidden" />
                         </Grid>
@@ -117,7 +134,6 @@
                 </GroupBox>
                 <GroupBox
                     Grid.Row="2"
-                    Width="380"
                     Padding="10,5,10,10"
                     Header="Active application">
                     <StackPanel>

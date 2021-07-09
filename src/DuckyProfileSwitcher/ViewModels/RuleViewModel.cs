@@ -54,6 +54,8 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(UsesGoToSleep));
                 OnPropertyChanged(nameof(UsesProfileSearch));
+                OnPropertyChanged(nameof(ProfileNumberNotFound));
+                OnPropertyChanged(nameof(ProfileNameNotFound));
             }
         }
 
@@ -66,6 +68,8 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(UsesGoToSleep));
                 OnPropertyChanged(nameof(UsesProfileNumber));
+                OnPropertyChanged(nameof(ProfileNumberNotFound));
+                OnPropertyChanged(nameof(ProfileNameNotFound));
             }
         }
 
@@ -76,8 +80,11 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 Rule.ProfileNumber = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ProfileNumberNotFound));
             }
         }
+
+        public bool ProfileNumberNotFound => UsesProfileNumber && Rule.FindProfile() == null;
 
         public string? ProfileName
         {
@@ -86,8 +93,11 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 Rule.ProfileName = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ProfileNameNotFound));
             }
         }
+
+        public bool ProfileNameNotFound => UsesProfileSearch && Rule.FindProfile() == null;
 
         public string? AppName
         {
