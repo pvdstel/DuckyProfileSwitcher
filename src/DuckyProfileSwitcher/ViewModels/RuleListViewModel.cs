@@ -1,7 +1,6 @@
 ﻿using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.Utilities;
 using DuckyProfileSwitcher.Views;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -84,10 +83,10 @@ namespace DuckyProfileSwitcher.ViewModels
             re.Owner = System.Windows.Application.Current.MainWindow;
             if (re.ShowDialog().GetValueOrDefault())
             {
-                ReplaceInList(ConfigurationManager.Configuration.Rules, r, copy);
+                ConfigurationManager.Configuration.Rules.ReplaceWith(r, copy);
                 RuleViewModel rvm = new(copy, true);
                 ConfigurationManager.Save();
-                ReplaceInList(Rules, sr, rvm);
+                Rules.ReplaceWith(sr, rvm);
                 SelectedRule = rvm;
             }
         }
@@ -164,18 +163,6 @@ namespace DuckyProfileSwitcher.ViewModels
             }
 
             SelectedRule = sr;
-        }
-
-        private void ReplaceInList<T>(IList<T> list, T existingRule, T newRule)
-        {
-            int index = list.IndexOf(existingRule);
-            if (index < 0)
-            {
-                return;
-            }
-
-            list.RemoveAt(index);
-            list.Insert(index, newRule);
         }
     }
 }

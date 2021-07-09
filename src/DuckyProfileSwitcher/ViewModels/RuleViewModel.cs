@@ -1,4 +1,5 @@
 ﻿using DuckyProfileSwitcher.Models;
+using DuckyProfileSwitcher.Utilities;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -25,7 +26,12 @@ namespace DuckyProfileSwitcher.ViewModels
         public string Name
         {
             get => Rule.Name;
-            set => Rule.Name = value;
+            set
+            {
+                Rule.Name = value;
+                OnPropertyChanged();
+                CommitAndSave();
+            }
         }
 
         public bool Enabled
@@ -35,6 +41,7 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 Rule.Enabled = value;
                 OnPropertyChanged();
+                CommitAndSave();
             }
         }
 
@@ -47,6 +54,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(UsesProfileNumber));
                 OnPropertyChanged(nameof(UsesProfileSearch));
+                CommitAndSave();
             }
         }
 
@@ -61,6 +69,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged(nameof(UsesProfileSearch));
                 OnPropertyChanged(nameof(ProfileNumberNotFound));
                 OnPropertyChanged(nameof(ProfileNameNotFound));
+                CommitAndSave();
             }
         }
 
@@ -75,6 +84,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 OnPropertyChanged(nameof(UsesProfileNumber));
                 OnPropertyChanged(nameof(ProfileNumberNotFound));
                 OnPropertyChanged(nameof(ProfileNameNotFound));
+                CommitAndSave();
             }
         }
 
@@ -86,6 +96,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 Rule.ProfileNumber = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ProfileNumberNotFound));
+                CommitAndSave();
             }
         }
 
@@ -99,6 +110,7 @@ namespace DuckyProfileSwitcher.ViewModels
                 Rule.ProfileName = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ProfileNameNotFound));
+                CommitAndSave();
             }
         }
 
@@ -111,6 +123,7 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 Rule.AppName = value;
                 OnPropertyChanged();
+                CommitAndSave();
             }
         }
 
@@ -121,6 +134,7 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 Rule.WindowTitle = value;
                 OnPropertyChanged();
+                CommitAndSave();
             }
         }
 
@@ -131,6 +145,16 @@ namespace DuckyProfileSwitcher.ViewModels
             {
                 Rule.WindowClass = value;
                 OnPropertyChanged();
+                CommitAndSave();
+            }
+        }
+
+        private void CommitAndSave()
+        {
+            if (autoCommit)
+            {
+                ConfigurationManager.Configuration.Rules.ReplaceWith(Rule, Rule);
+                ConfigurationManager.Save();
             }
         }
     }

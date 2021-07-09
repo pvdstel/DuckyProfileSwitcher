@@ -49,7 +49,7 @@ namespace DuckyProfileSwitcher
                 return;
             }
 
-            Rule? selectedRule = rules.FirstOrDefault(r =>
+            Rule? selectedRule = rules.Where(r => r.Enabled).FirstOrDefault(r =>
             {
                 if (!string.IsNullOrEmpty(r.AppName) && string.Compare(r.AppName, activeWindow.ProcessName, true) != 0)
                 {
