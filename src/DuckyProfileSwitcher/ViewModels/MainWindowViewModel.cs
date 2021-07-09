@@ -70,7 +70,7 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public async void SetProfile(DuckyPadProfile profile)
         {
-            await DuckyPadManager.Instance.SetProfile(profile).ConfigureAwait(false);
+            await DuckyPadManager.Instance.SetProfile(profile);
         }
 
         public string DuckyPadDetails
@@ -89,8 +89,8 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public async void DeviceChange()
         {
-            await Task.Delay(DeviceChangeDelay).ConfigureAwait(false);
-            await DuckyPadManager.Instance.RefreshConnected().ConfigureAwait(false);
+            await Task.Delay(DeviceChangeDelay);
+            await DuckyPadManager.Instance.RefreshConnected();
         }
 
         private void ManagerChange(object sender, EventArgs e)

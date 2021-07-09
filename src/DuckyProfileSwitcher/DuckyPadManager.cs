@@ -96,11 +96,11 @@ namespace DuckyProfileSwitcher
 
         public async Task RefreshConnected()
         {
-            bool nextIsConnected = await DuckyPadCommunication.IsConnected(cancellationTokenSource.Token).ConfigureAwait(false);
+            bool nextIsConnected = await DuckyPadCommunication.IsConnected(cancellationTokenSource.Token);
             if (nextIsConnected && !IsConnected)
             {
                 IsConnected = true;
-                await RefreshProfiles().ConfigureAwait(false);
+                await RefreshProfiles();
             }
             else if (IsConnected && !nextIsConnected)
             {
@@ -124,9 +124,9 @@ namespace DuckyProfileSwitcher
             IsBusy = true;
             await RunCatchDuckyPadException(async () =>
             {
-                await DuckyPadCommunication.GotoProfile(profile.Number, ltct.Token).ConfigureAwait(false);
-                await RefreshInfo().ConfigureAwait(false);
-            }).ConfigureAwait(false);
+                await DuckyPadCommunication.GotoProfile(profile.Number, ltct.Token);
+                await RefreshInfo();
+            });
             IsBusy = false;
         }
 
@@ -141,9 +141,9 @@ namespace DuckyProfileSwitcher
             IsBusy = true;
             await RunCatchDuckyPadException(async () =>
             {
-                await DuckyPadCommunication.PreviousProfile(ltct.Token).ConfigureAwait(false);
-                await RefreshInfo().ConfigureAwait(false);
-            }).ConfigureAwait(false);
+                await DuckyPadCommunication.PreviousProfile(ltct.Token);
+                await RefreshInfo();
+            });
             IsBusy = false;
         }
 
@@ -158,9 +158,9 @@ namespace DuckyProfileSwitcher
             IsBusy = true;
             await RunCatchDuckyPadException(async () =>
             {
-                await DuckyPadCommunication.NextProfile(ltct.Token).ConfigureAwait(false);
-                await RefreshInfo().ConfigureAwait(false);
-            }).ConfigureAwait(false);
+                await DuckyPadCommunication.NextProfile(ltct.Token);
+                await RefreshInfo();
+            });
             IsBusy = false;
         }
 
@@ -171,10 +171,10 @@ namespace DuckyProfileSwitcher
                 using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
                 await RunCatchDuckyPadException(async () =>
                 {
-                    var info = await DuckyPadCommunication.GetDuckyPadInfo(ltct.Token).ConfigureAwait(false);
+                    var info = await DuckyPadCommunication.GetDuckyPadInfo(ltct.Token);
                     Info = info;
                     SelectedProfile = Profiles.FirstOrDefault(p => p.Number == info.Profile);
-                }).ConfigureAwait(false);
+                });
             }
         }
 
@@ -185,7 +185,7 @@ namespace DuckyProfileSwitcher
                 using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
                 await RunCatchDuckyPadException(async () =>
                 {
-                    var r = await DuckyPadCommunication.ListFiles(ltct.Token).ConfigureAwait(false);
+                    var r = await DuckyPadCommunication.ListFiles(ltct.Token);
                     IsBusy = false;
                     var nextProfiles = r.Where(f => f.type == DuckyPadFileType.Directory && f.name.StartsWith("profile"))
                         .Select(f =>
@@ -200,7 +200,7 @@ namespace DuckyProfileSwitcher
                     {
                         Profiles = nextProfiles.ToImmutableList();
                     }
-                }).ConfigureAwait(false);
+                });
             }
         }
 
@@ -208,7 +208,7 @@ namespace DuckyProfileSwitcher
         {
             try
             {
-                await task().ConfigureAwait(false);
+                await task();
             }
             catch (DuckyPadException dpex)
             {
@@ -225,18 +225,18 @@ namespace DuckyProfileSwitcher
             int i = 0;
             while (!lifetimeToken.IsCancellationRequested)
             {
-                await RefreshConnected().ConfigureAwait(false);
+                await RefreshConnected();
                 ++i;
                 if (i >= ProfileRetrievalCount)
                 {
                     i = 0;
-                    await RefreshProfiles().ConfigureAwait(false);
+                    await RefreshProfiles();
                 }
                 if (i % InfoRetrievalCount == 0)
                 {
-                    await RefreshInfo().ConfigureAwait(false);
+                    await RefreshInfo();
                 }
-                await Task.Delay(PollingDelayMS).ConfigureAwait(false);
+                await Task.Delay(PollingDelayMS);
             }
         }
     }

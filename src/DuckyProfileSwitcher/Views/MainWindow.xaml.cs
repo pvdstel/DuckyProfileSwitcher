@@ -124,7 +124,7 @@ namespace DuckyProfileSwitcher.Views
                     DialogResultOnCancel = MessageDialogResult.Canceled,
                     DialogTitleFontSize = 18,
                     NegativeButtonText = "No",
-                }).ConfigureAwait(false);
+                });
                 closeDialogCancellation?.Dispose();
                 closeDialogCancellation = null;
                 if (result == MessageDialogResult.Affirmative)

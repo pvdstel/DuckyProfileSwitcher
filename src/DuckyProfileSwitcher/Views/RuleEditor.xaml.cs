@@ -28,7 +28,7 @@ namespace DuckyProfileSwitcher.Views
             ruleNameBinding.ValidationRules.Add(new RequiredValidation());
             profileNumberBinding.ValidationRules.Add(new RangeValidation { Minimum = 1, Maximum = 32 });
             ruleName.Focus();
-            await Task.Delay(100).ConfigureAwait(false);
+            await Task.Delay(100);
             ruleName.SelectAll();
             await Task.Run(() =>
             {
@@ -38,7 +38,7 @@ namespace DuckyProfileSwitcher.Views
                     .OrderBy(w => w.ProcessName).ThenBy(w => w.Title)
                     .ToList();
                 Dispatcher.Invoke(() => openWindowsList.ItemsSource = windows);
-            }).ConfigureAwait(false);
+            });
         }
 
         private void SaveButton_Click(object sender, System.Windows.RoutedEventArgs e)

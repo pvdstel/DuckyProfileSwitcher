@@ -82,7 +82,7 @@ namespace DuckyProfileSwitcher
                     DuckyPadProfile? profileFromLabel = selectedRule.FindProfile();
                     if (profileFromLabel != null)
                     {
-                        await DuckyPadManager.Instance.SetProfile(profileFromLabel).ConfigureAwait(false);
+                        await DuckyPadManager.Instance.SetProfile(profileFromLabel);
                     }
                     break;
             }

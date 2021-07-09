@@ -126,7 +126,7 @@ namespace DuckyProfileSwitcher
             while (!lifetimeToken.IsCancellationRequested)
             {
                 Refresh();
-                await Task.Delay(PollingDelayMS).ConfigureAwait(false);
+                await Task.Delay(PollingDelayMS);
             }
         }
     }

@@ -24,11 +24,11 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken);
                 IDeviceFactory? hidFactory = new FilterDeviceDefinition()
                     .CreateWindowsHidDeviceFactory();
 
-                var definitions = await hidFactory.GetConnectedDeviceDefinitionsAsync(cancellationToken).ConfigureAwait(false);
+                var definitions = await hidFactory.GetConnectedDeviceDefinitionsAsync(cancellationToken);
                 bool exists = definitions.Any(hid =>
                     hid.Usage == CountedBufferUsage
                     && hid.Manufacturer.Contains(VendorName));
@@ -45,9 +45,9 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken);
                 DuckyPadMessage message = new(0, DuckyPadCommand.Info);
-                var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
+                var response = await WriteReceive(message, cancellationToken);
                 var result = new DuckyPadInfo(response.Payload[0],
                                               response.Payload[1],
                                               response.Payload[2],
@@ -66,11 +66,11 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken);
                 DuckyPadMessage message = new(0, DuckyPadCommand.Goto);
                 message.Payload[0] = profile;
-                var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
-                await Task.Delay(ProcessingDelayMS).ConfigureAwait(false);
+                var response = await WriteReceive(message, cancellationToken);
+                await Task.Delay(ProcessingDelayMS);
                 return response.Status;
             }
             finally
@@ -83,10 +83,10 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken);
                 DuckyPadMessage message = new(0, DuckyPadCommand.PreviousProfile);
-                var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
-                await Task.Delay(ProcessingDelayMS).ConfigureAwait(false);
+                var response = await WriteReceive(message, cancellationToken);
+                await Task.Delay(ProcessingDelayMS);
                 return response.Status;
             }
             finally
@@ -99,10 +99,10 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken);
                 DuckyPadMessage message = new(0, DuckyPadCommand.NextProfile);
-                var response = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
-                await Task.Delay(ProcessingDelayMS).ConfigureAwait(false);
+                var response = await WriteReceive(message, cancellationToken);
+                await Task.Delay(ProcessingDelayMS);
                 return response.Status;
             }
             finally
@@ -115,7 +115,7 @@ namespace DuckyProfileSwitcher.HID
         {
             try
             {
-                await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                await semaphoreSlim.WaitAsync(cancellationToken);
                 DuckyPadMessage message = new(0, DuckyPadCommand.ListFiles);
                 if (!string.IsNullOrEmpty(rootDir))
                 {
@@ -124,7 +124,7 @@ namespace DuckyProfileSwitcher.HID
                 }
 
                 List<(string name, DuckyPadFileType type)> result = new();
-                DuckyPadResponse duckyPadResponse = await WriteReceive(message, cancellationToken).ConfigureAwait(false);
+                DuckyPadResponse duckyPadResponse = await WriteReceive(message, cancellationToken);
                 while (true)
                 {
                     ThrowIfError(duckyPadResponse);
@@ -154,7 +154,7 @@ namespace DuckyProfileSwitcher.HID
                     result.Add((filename, type));
 
                     DuckyPadMessage resume = new(0, DuckyPadCommand.Resume);
-                    duckyPadResponse = await WriteReceive(resume, cancellationToken).ConfigureAwait(false);
+                    duckyPadResponse = await WriteReceive(resume, cancellationToken);
                 }
 
                 return result.ToImmutableList();
@@ -173,9 +173,9 @@ namespace DuckyProfileSwitcher.HID
         /// <returns>The response from the device.</returns>
         private static async Task<DuckyPadResponse> WriteReceive(DuckyPadMessage message, CancellationToken cancellationToken)
         {
-            using IDevice? duckyPad = await FindDuckyPad(cancellationToken).ConfigureAwait(false);
+            using IDevice? duckyPad = await FindDuckyPad(cancellationToken);
             byte[]? messageBytes = message.GetBytes();
-            TransferResult hidResponse = await duckyPad.WriteAndReadAsync(messageBytes, cancellationToken).ConfigureAwait(false);
+            TransferResult hidResponse = await duckyPad.WriteAndReadAsync(messageBytes, cancellationToken);
             byte[]? responseBytes = hidResponse.Data;
             return DuckyPadResponse.FromBytes(responseBytes);
         }
@@ -206,7 +206,7 @@ namespace DuckyProfileSwitcher.HID
             IDeviceFactory? hidFactory = new FilterDeviceDefinition(productId: ProductID)
                 .CreateWindowsHidDeviceFactory(readBufferSize: DuckyPadResponse.TotalSize, writeBufferSize: DuckyPadMessage.TotalSize);
 
-            ConnectedDeviceDefinition? deviceDefinition = (await hidFactory.GetConnectedDeviceDefinitionsAsync(cancellationToken).ConfigureAwait(false))
+            ConnectedDeviceDefinition? deviceDefinition = (await hidFactory.GetConnectedDeviceDefinitionsAsync(cancellationToken))
                 .FirstOrDefault(hid =>
                     hid.Usage == CountedBufferUsage
                     && hid.Manufacturer.Contains(VendorName));
@@ -216,8 +216,8 @@ namespace DuckyProfileSwitcher.HID
                 throw new DuckyPadException("No connected duckyPad was found.");
             }
 
-            IDevice? duckyPad = await hidFactory.GetDeviceAsync(deviceDefinition, cancellationToken).ConfigureAwait(false);
-            await duckyPad.InitializeAsync(cancellationToken).ConfigureAwait(false);
+            IDevice? duckyPad = await hidFactory.GetDeviceAsync(deviceDefinition, cancellationToken);
+            await duckyPad.InitializeAsync(cancellationToken);
 
             return duckyPad;
         }
