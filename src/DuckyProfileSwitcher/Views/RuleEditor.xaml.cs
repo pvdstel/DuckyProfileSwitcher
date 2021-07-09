@@ -1,7 +1,9 @@
 ﻿using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.Validators;
 using DuckyProfileSwitcher.ViewModels;
+using MahApps.Metro.Controls;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace DuckyProfileSwitcher.Views
 {
@@ -63,7 +65,11 @@ namespace DuckyProfileSwitcher.Views
         private void ProfileNameRadio_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
             profileSearchName.Focus();
-            profileSearchName.SelectAll();
+            var comboBoxText = profileSearchName.FindChild<TextBox>("PART_EditableTextBox");
+            if (comboBoxText != null)
+            {
+                comboBoxText.SelectAll();
+            }
         }
     }
 }

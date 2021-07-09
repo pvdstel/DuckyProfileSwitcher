@@ -1,4 +1,6 @@
 ﻿using DuckyProfileSwitcher.Models;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace DuckyProfileSwitcher.ViewModels
 {
@@ -13,9 +15,12 @@ namespace DuckyProfileSwitcher.ViewModels
         {
             Rule = rule;
             this.autoCommit = autoCommit;
+            ProfileNames = DuckyPadManager.Instance.Profiles?.Select(r => r.Name).ToImmutableList() ?? ImmutableList<string>.Empty;
         }
 
         public Rule Rule { get; }
+
+        public ImmutableList<string> ProfileNames { get; }
 
         public string Name
         {

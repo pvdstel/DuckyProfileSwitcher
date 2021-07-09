@@ -107,13 +107,17 @@
                                 Checked="ProfileNameRadio_Checked"
                                 Content="Search by name"
                                 IsChecked="{Binding UsesProfileSearch}" />
-                            <TextBox
+                            <ComboBox
                                 x:Name="profileSearchName"
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Width="150"
                                 HorizontalAlignment="Left"
+                                mah:TextBoxHelper.Watermark="Part of profile name"
+                                IsEditable="True"
                                 IsEnabled="{Binding UsesProfileSearch}"
+                                ItemsSource="{Binding ProfileNames}"
+                                StaysOpenOnEdit="True"
                                 Text="{Binding ProfileName, UpdateSourceTrigger=PropertyChanged}" />
                             <Label
                                 Grid.Row="4"
