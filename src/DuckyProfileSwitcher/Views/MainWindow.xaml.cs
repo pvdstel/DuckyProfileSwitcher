@@ -97,6 +97,7 @@ namespace DuckyProfileSwitcher.Views
         private void OnViewModelTimeout(object sender, EventArgs e)
         {
             notifyIcon.ShowBalloonTip(5000, "duckyPad Profile Switcher", "A duckyPad operation could not complete in time.", ToolTipIcon.Warning);
+            DuckyPadManager.InvalidateDeviceCache();
         }
 
         private async void ExitApplication()
