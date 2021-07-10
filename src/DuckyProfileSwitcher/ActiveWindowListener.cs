@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -18,7 +15,9 @@ namespace DuckyProfileSwitcher
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
         private const int PollingDelayMS = 2000;
 
-        private static readonly ConcurrentDictionary<int, Process> processCache = new();
+        // This dictionary keeps track of windows and process we've already encountered, so that querying processes
+        // all the time is not necessary. The combination of hWnd and pid is very, very unlikely to be reused.
+        private static readonly Dictionary<(IntPtr hWnd, int pid), string> processNameCache = new();
         private readonly WINEVENTPROC callback;
         private readonly CancellationToken lifetimeToken;
         private ActiveWindowChangedEventArgs? activeWindow;
@@ -93,43 +92,30 @@ namespace DuckyProfileSwitcher
 
         private static string GetWindowProcessName(IntPtr hWnd)
         {
-            var oldEntries = processCache.Where(e => e.Value == null || e.Value.HasExited).ToArray();
-            foreach (var entry in oldEntries)
-            {
-                if (processCache.TryRemove(entry.Key, out var _))
-                {
-                    Debug.WriteLine($"Expunged old cached process {entry.Key} ({entry.Value?.ProcessName ?? "unknown"})");
-                    entry.Value?.Dispose();
-                }
-            }
+            _ = GetWindowThreadProcessId(hWnd, out uint procId);
+            return GetWindowProcessName(hWnd, (int)procId);
+        }
 
-            try
+        private static string GetWindowProcessName(IntPtr hWnd, int processId)
+        {
+            var key = (hWnd, processId);
+            if (processNameCache.TryGetValue(key, out string value))
             {
-                _ = GetWindowThreadProcessId(hWnd, out uint procId);
-                if (!processCache.TryGetValue((int)procId, out var cachedProcess))
-                {
-                    cachedProcess = Process.GetProcessById((int)procId);
-                    try
-                    {
-                        // If getting info about the program does not throw, add it to the cache
-                        if (!cachedProcess.HasExited)
-                        {
-                            processCache[(int)procId] = cachedProcess;
-                            Debug.WriteLine($"Added process {procId} ({cachedProcess.ProcessName}) to cache");
-                        }
-                    }
-                    catch (Win32Exception) { }
-                }
-                else
-                {
-                    Debug.WriteLine($"Found process {cachedProcess.ProcessName} in cache");
-                }
-                string processName = cachedProcess.ProcessName ?? string.Empty;
-                return processName;
+                return value;
             }
-            catch (ArgumentException)
+            else
             {
-                return string.Empty;
+                try
+                {
+                    using Process? process = Process.GetProcessById(processId);
+                    string name = process?.ProcessName ?? string.Empty;
+                    processNameCache[key] = name;
+                    return name;
+                }
+                catch (ArgumentException)
+                {
+                    return string.Empty;
+                }
             }
         }
 
