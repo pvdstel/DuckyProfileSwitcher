@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -13,8 +16,9 @@ namespace DuckyProfileSwitcher
     {
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
-        private const int PollingDelayMS = 1000;
+        private const int PollingDelayMS = 2000;
 
+        private static readonly ConcurrentDictionary<int, Process> processCache = new();
         private readonly WINEVENTPROC callback;
         private readonly CancellationToken lifetimeToken;
         private ActiveWindowChangedEventArgs? activeWindow;
@@ -89,11 +93,38 @@ namespace DuckyProfileSwitcher
 
         private static string GetWindowProcessName(IntPtr hWnd)
         {
+            var oldEntries = processCache.Where(e => e.Value == null || e.Value.HasExited).ToArray();
+            foreach (var entry in oldEntries)
+            {
+                if (processCache.TryRemove(entry.Key, out var _))
+                {
+                    Debug.WriteLine($"Expunged old cached process {entry.Key} ({entry.Value?.ProcessName ?? "unknown"})");
+                    entry.Value?.Dispose();
+                }
+            }
+
             try
             {
                 _ = GetWindowThreadProcessId(hWnd, out uint procId);
-                using Process? process = Process.GetProcessById((int)procId);
-                string processName = process.ProcessName ?? string.Empty;
+                if (!processCache.TryGetValue((int)procId, out var cachedProcess))
+                {
+                    cachedProcess = Process.GetProcessById((int)procId);
+                    try
+                    {
+                        // If getting info about the program does not throw, add it to the cache
+                        if (!cachedProcess.HasExited)
+                        {
+                            processCache[(int)procId] = cachedProcess;
+                            Debug.WriteLine($"Added process {procId} ({cachedProcess.ProcessName}) to cache");
+                        }
+                    }
+                    catch (Win32Exception) { }
+                }
+                else
+                {
+                    Debug.WriteLine($"Found process {cachedProcess.ProcessName} in cache");
+                }
+                string processName = cachedProcess.ProcessName ?? string.Empty;
                 return processName;
             }
             catch (ArgumentException)
