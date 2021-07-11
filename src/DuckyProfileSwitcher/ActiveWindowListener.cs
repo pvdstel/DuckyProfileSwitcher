@@ -14,10 +14,12 @@ namespace DuckyProfileSwitcher
         private const uint WINEVENT_OUTOFCONTEXT = 0;
         private const uint EVENT_SYSTEM_FOREGROUND = 3;
         private const int PollingDelayMS = 2000;
+        private const int CacheReset = 60 * 60 * 1000 / PollingDelayMS;
 
         // This dictionary keeps track of windows and process we've already encountered, so that querying processes
         // all the time is not necessary. The combination of hWnd and pid is very, very unlikely to be reused.
         private static readonly Dictionary<(IntPtr hWnd, int pid), string> processNameCache = new();
+        private int pollCounter = 0;
         private readonly WINEVENTPROC callback;
         private readonly CancellationToken lifetimeToken;
         private ActiveWindowChangedEventArgs? activeWindow;
@@ -143,6 +145,12 @@ namespace DuckyProfileSwitcher
             while (!lifetimeToken.IsCancellationRequested)
             {
                 Refresh();
+                ++pollCounter;
+                if (pollCounter >= CacheReset)
+                {
+                    processNameCache.Clear();
+                }
+
                 await Task.Delay(PollingDelayMS);
             }
         }
