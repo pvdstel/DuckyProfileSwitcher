@@ -48,6 +48,12 @@ namespace DuckyProfileSwitcher.HID
             }
         }
 
+        public static async Task<ConnectedDeviceDefinition?> GetDeviceInfo(CancellationToken cancellationToken)
+        {
+            IDevice? dp = await FindDuckyPad(cancellationToken);
+            return dp?.ConnectedDeviceDefinition;
+        }
+
         public static async Task<DuckyPadInfo> GetDuckyPadInfo(CancellationToken cancellationToken)
         {
             try

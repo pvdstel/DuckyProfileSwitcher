@@ -62,10 +62,9 @@
                     TextFalse="duckyPad not found."
                     TextTrue="duckyPad connected."
                     Value="{Binding IsConnected}" />
-                <Label
-                    Margin="22,0,0,0"
-                    Padding="0"
-                    Content="{Binding DuckyPadDetails}" />
+                <Label Margin="22,0,0,0" Padding="0">
+                    <TextBlock Text="{Binding DuckyPadDetails}" />
+                </Label>
                 <controls:StatusHeader
                     Margin="0,5,0,0"
                     TextFalse="duckyPad Profile Switcher is not monitoring for switching conditions."

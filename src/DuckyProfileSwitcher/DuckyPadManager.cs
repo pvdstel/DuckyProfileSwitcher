@@ -1,4 +1,5 @@
-﻿using DuckyProfileSwitcher.HID;
+﻿using Device.Net;
+using DuckyProfileSwitcher.HID;
 using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.Utilities;
 using System;
@@ -22,6 +23,7 @@ namespace DuckyProfileSwitcher
         private bool isConnected;
         private bool isBusy;
         private DuckyPadInfo? info;
+        private ConnectedDeviceDefinition? deviceDefinition;
         private DuckyPadProfile? selectedProfile;
         private ImmutableList<DuckyPadProfile>? profiles;
 
@@ -33,6 +35,8 @@ namespace DuckyProfileSwitcher
         public event EventHandler? Timeout;
 
         public event EventHandler? InfoChanged;
+
+        public event EventHandler? DeviceDefinitionChanged;
 
         public event EventHandler? ProfilesChanged;
 
@@ -71,6 +75,16 @@ namespace DuckyProfileSwitcher
             {
                 info = value;
                 InfoChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public ConnectedDeviceDefinition? DeviceDefinition
+        {
+            get => deviceDefinition;
+            set
+            {
+                deviceDefinition = value;
+                DeviceDefinitionChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -178,6 +192,8 @@ namespace DuckyProfileSwitcher
                 {
                     var info = await DuckyPadCommunication.GetDuckyPadInfo(ltct.Token);
                     Info = info;
+                    var definition = await DuckyPadCommunication.GetDeviceInfo(ltct.Token);
+                    DeviceDefinition = definition;
                     SelectedProfile = Profiles.FirstOrDefault(p => p.Number == info.Profile);
                 });
             }
