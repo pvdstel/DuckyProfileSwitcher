@@ -11,6 +11,8 @@
     Title="duckyPad Profile Switcher"
     Width="700"
     Height="500"
+    MinWidth="500"
+    MinHeight="350"
     d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     Closing="Window_Closing"
     GlowBrush="#333"
@@ -92,7 +94,12 @@
                     Margin="0,0,10,10"
                     Command="{Binding NextProfile}"
                     Content="_Next profile" />
+                <Label
+                    Margin="0,0,0,10"
+                    Content="_Select:"
+                    Target="{Binding ElementName=profileSelector}" />
                 <ComboBox
+                    x:Name="profileSelector"
                     Width="100"
                     Margin="0,0,10,10"
                     IsEnabled="{Binding CanSwitchProfile}"
@@ -104,6 +111,11 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <Button
+                    Margin="0,0,10,10"
+                    Content="S_leep"
+                    IsEnabled="True"
+                    ToolTip="Not yet implemented" />
             </WrapPanel>
             <Rectangle
                 Grid.Row="3"

@@ -101,7 +101,7 @@ namespace DuckyProfileSwitcher.ViewModels
             HID.DuckyPadInfo? info = DuckyPadManager.Instance.Info;
             Device.Net.ConnectedDeviceDefinition? definition = DuckyPadManager.Instance.DeviceDefinition;
             DuckyPadDetails = info != null && definition != null
-                ? $"Firmware: {info.Major}.{info.Minor}.{info.Patch} | Model: {definition.ProductName} | Serial number: {definition.SerialNumber}"
+                ? $"Firmware: {info.Major}.{info.Minor}.{info.Patch}  |  Model: {definition.ProductName}  |  Serial number: {definition.SerialNumber}"
                 : "(disconnected)";
             System.Diagnostics.Debug.WriteLine("DuckyPadManager updated.");
             OnPropertyChanged(string.Empty);
