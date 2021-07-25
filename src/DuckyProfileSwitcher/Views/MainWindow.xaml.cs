@@ -35,9 +35,13 @@ namespace DuckyProfileSwitcher.Views
             ConfigurationManager.ConfigurationChanged += ConfigurationManager_ConfigurationChanged;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Initialized(object sender, EventArgs e)
         {
             CreateNotifyIcon();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
             source.AddHook(HwndHandler);
             deviceListener.RegisterDeviceNotification(source.Handle);
