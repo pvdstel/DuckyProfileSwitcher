@@ -31,6 +31,8 @@ namespace DuckyProfileSwitcher.Views
             {
                 Visibility = Visibility.Hidden;
             }
+
+            ConfigurationManager.ConfigurationChanged += ConfigurationManager_ConfigurationChanged;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -145,10 +147,19 @@ namespace DuckyProfileSwitcher.Views
             }
         }
 
+        private void ConfigurationManager_ConfigurationChanged(object sender, EventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                notifyIcon.Visible = ConfigurationManager.Configuration.ShowTrayIcon;
+            });
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (allowClose)
             {
+                ConfigurationManager.ConfigurationChanged -= ConfigurationManager_ConfigurationChanged;
                 deviceListener.Dispose();
                 viewModel.Dispose();
                 notifyIcon.Dispose();

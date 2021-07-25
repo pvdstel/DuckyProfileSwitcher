@@ -1,21 +1,24 @@
 ﻿using DuckyProfileSwitcher.Models;
 using DuckyProfileSwitcher.Utilities;
 using DuckyProfileSwitcher.Views;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace DuckyProfileSwitcher.ViewModels
 {
-    public class RuleListViewModel : Notifyable
+    public class RuleListViewModel : Notifyable, IDisposable
     {
         private ObservableCollection<RuleViewModel> rules = new();
         private RuleViewModel? selectedRule;
+        private bool disposedValue;
 
         public RuleListViewModel()
         {
             var viewModels = ConfigurationManager.Configuration.Rules
                 .Select(r => new RuleViewModel(r, true));
             rules = new ObservableCollection<RuleViewModel>(viewModels);
+            ConfigurationManager.ConfigurationChanged += ConfigurationManager_ConfigurationChanged;
 
             AddRuleCommand = new(NewRule);
             EditSelectedRuleCommand = new(EditSelectedRule, () => SelectedRule != null);
@@ -163,6 +166,37 @@ namespace DuckyProfileSwitcher.ViewModels
             }
 
             SelectedRule = sr;
+        }
+
+        private void ConfigurationManager_ConfigurationChanged(object sender, EventArgs e)
+        {
+            var viewModels = ConfigurationManager.Configuration.Rules
+                .Select(r => new RuleViewModel(r, true));
+            Rules = new ObservableCollection<RuleViewModel>(viewModels);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ConfigurationManager.ConfigurationChanged -= ConfigurationManager_ConfigurationChanged;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        ~RuleListViewModel()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

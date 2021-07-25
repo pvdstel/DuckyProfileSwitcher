@@ -76,6 +76,11 @@ namespace DuckyProfileSwitcher.Models
             return hashCode;
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public static bool operator ==(Rule? left, Rule? right)
         {
             return EqualityComparer<Rule>.Default.Equals(left!, right!);
