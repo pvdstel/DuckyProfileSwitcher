@@ -3,6 +3,7 @@ using DuckyProfileSwitcher.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
@@ -25,6 +26,11 @@ namespace DuckyProfileSwitcher.Views
         {
             InitializeComponent();
             DataContext = viewModel;
+
+            if (!ConfigurationManager.Configuration.ShowOnStartup || Environment.GetCommandLineArgs().Any(a => string.Compare("hidden", a, true) == 0))
+            {
+                Visibility = Visibility.Hidden;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

@@ -16,7 +16,7 @@ namespace DuckyProfileSwitcher
             windowListener = new ActiveWindowListener();
             windowListener.ActiveWindowChanged += WindowListener_ActiveWindowChanged;
 
-            if (Environment.GetCommandLineArgs().Any(a => string.Compare("run", a, true) == 0))
+            if (ConfigurationManager.Configuration.MonitorOnStartup || Environment.GetCommandLineArgs().Any(a => string.Compare("run", a, true) == 0))
             {
                 IsRunning = true;
             }
