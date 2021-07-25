@@ -69,7 +69,7 @@ namespace DuckyProfileSwitcher.Views
             using Stream iconStream = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/Resources/small.ico")).Stream;
             notifyIcon.Text = "duckyPad Profile Switcher";
             notifyIcon.Icon = new System.Drawing.Icon(iconStream);
-            notifyIcon.Visible = true;
+            notifyIcon.Visible = ConfigurationManager.Configuration.ShowTrayIcon;
             notifyIcon.Click += (sender, e) => Show();
             MenuItem runningToggle = new("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             MenuItem goToProfile = new("Go to", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
