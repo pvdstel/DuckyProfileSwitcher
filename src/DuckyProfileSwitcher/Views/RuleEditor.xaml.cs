@@ -5,13 +5,14 @@ using MahApps.Metro.Controls;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace DuckyProfileSwitcher.Views
 {
     /// <summary>
     /// Interaction logic for RuleEditor.xaml
     /// </summary>
-    public partial class RuleEditor : MahApps.Metro.Controls.MetroWindow
+    public partial class RuleEditor : MetroWindow
     {
         private readonly RuleViewModel viewModel;
         private int errorCount = 0;
@@ -55,11 +56,11 @@ namespace DuckyProfileSwitcher.Views
 
         private void MetroWindow_Error(object sender, System.Windows.Controls.ValidationErrorEventArgs e)
         {
-            if (e.Action == System.Windows.Controls.ValidationErrorEventAction.Added)
+            if (e.Action == ValidationErrorEventAction.Added)
             {
                 ++errorCount;
             }
-            else if (e.Action == System.Windows.Controls.ValidationErrorEventAction.Removed)
+            else if (e.Action == ValidationErrorEventAction.Removed)
             {
                 --errorCount;
             }
@@ -77,6 +78,15 @@ namespace DuckyProfileSwitcher.Views
             profileSearchName.Focus();
             var comboBoxText = profileSearchName.FindChild<TextBox>("PART_EditableTextBox");
             comboBoxText?.SelectAll();
+        }
+
+        private void OpenWindowListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (openWindowsList.SelectedItem is WindowDescription windowDescription)
+            {
+                viewModel.AppName = windowDescription.ProcessName;
+                viewModel.WindowTitle = windowDescription.Title;
+            }
         }
     }
 }

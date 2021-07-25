@@ -155,6 +155,11 @@
                 Header="Open windows">
                 <Grid>
                     <ListView x:Name="openWindowsList">
+                        <ListView.Resources>
+                            <Style BasedOn="{StaticResource MahApps.Styles.ListViewItem}" TargetType="ListViewItem">
+                                <EventSetter Event="MouseDoubleClick" Handler="OpenWindowListViewItem_MouseDoubleClick" />
+                            </Style>
+                        </ListView.Resources>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn
