@@ -73,11 +73,13 @@ namespace DuckyProfileSwitcher.Views
             notifyIcon.Click += (sender, e) => Show();
             MenuItem runningToggle = new("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             MenuItem goToProfile = new("Go to", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
+            MenuItem sleep = new("Sleep", (s, e) => viewModel.Sleep.Execute(new object()));
             notifyIcon.ContextMenu = new ContextMenu(new MenuItem[]
             {
                 new MenuItem("Open", (s, e) => Show()),
                 runningToggle,
                 goToProfile,
+                sleep,
                 new MenuItem("-"),
                 new MenuItem("Exit", (s, e) => ExitApplication()),
             });
@@ -85,6 +87,8 @@ namespace DuckyProfileSwitcher.Views
             {
                 runningToggle.Checked = viewModel.IsRunning;
                 goToProfile.MenuItems.Clear();
+                goToProfile.Enabled = viewModel.CanSwitchProfile;
+                sleep.Enabled = viewModel.Sleep.CanExecute(new object());
                 if (viewModel.Profiles != null)
                 {
                     goToProfile.Visible = true;
