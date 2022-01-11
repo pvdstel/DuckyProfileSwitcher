@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>9</LangVersion>
     <ApplicationIcon>Resources\small.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
