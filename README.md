@@ -7,7 +7,7 @@ DuckyProfileSwitcher switches the profile on your [duckyPad](https://github.com/
 
 ## Usage
 
-When running, the application should automatically detect your duckyPad and display some information about it. It does not automatically monitor which program is active. This can be enabled by ticking the _Running_ checkbox, enabling it in the configuration, or by passing the flag `run` as a command line parameter.
+When running, the application should automatically detect your duckyPad and display some information about it. It does not automatically monitor which program is active. This can be enabled by ticking the _Running_ checkbox, enabling it in the configuration, or by passing the flag `run` as a command line parameter. The main window can be hidden on launch by passing the flag `hidden` as a command line parameter.
 
 The application minimizes to the system tray when the window is closed. The tray icon can also be hidden in the configuration. If you've closed the window, and the tray icon is invisible, simply run the program again. It will signal the existing process to show its window again. You can also close it via Task Manager.
 
