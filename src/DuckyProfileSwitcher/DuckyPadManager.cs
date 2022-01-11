@@ -183,6 +183,23 @@ namespace DuckyProfileSwitcher
             IsBusy = false;
         }
 
+        public async Task Sleep()
+        {
+            using var ltct = new LinkedTimeoutCancellationToken(lifetimeToken, ActionCancellationTimeMS);
+            if (!IsConnected)
+            {
+                return;
+            }
+
+            IsBusy = true;
+            await RunCatchDuckyPadException(async () =>
+            {
+                await DuckyPadCommunication.Sleep(ltct.Token);
+                await RefreshInfo();
+            });
+            IsBusy = false;
+        }
+
         private async Task RefreshInfo()
         {
             if (IsConnected)

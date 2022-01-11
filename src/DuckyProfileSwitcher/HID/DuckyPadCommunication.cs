@@ -124,6 +124,22 @@ namespace DuckyProfileSwitcher.HID
             }
         }
 
+        public static async Task<DuckyPadStatus> Sleep(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await semaphoreSlim.WaitAsync(cancellationToken);
+                DuckyPadMessage message = new(0, DuckyPadCommand.Sleep);
+                var response = await WriteReceive(message, cancellationToken);
+                await Task.Delay(ProcessingDelayMS);
+                return response.Status;
+            }
+            finally
+            {
+                semaphoreSlim.Release();
+            }
+        }
+
         public static async Task<ImmutableList<(string name, DuckyPadFileType type)>> ListFiles(CancellationToken cancellationToken, string? rootDir = null)
         {
             try

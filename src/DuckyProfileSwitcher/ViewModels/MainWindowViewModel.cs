@@ -17,6 +17,7 @@ namespace DuckyProfileSwitcher.ViewModels
         {
             PreviousProfile = new RelayCommand(() => _ = DuckyPadManager.Instance.PreviousProfile(), () => CanSwitchProfile);
             NextProfile = new RelayCommand(() => _ = DuckyPadManager.Instance.NextProfile(), () => CanSwitchProfile);
+            Sleep = new RelayCommand(() => _ = DuckyPadManager.Instance.Sleep(), () => CanSleep);
 
             DuckyPadManager.Instance.InfoChanged += ManagerChange;
             DuckyPadManager.Instance.IsBusyChanged += ManagerChange;
@@ -43,6 +44,8 @@ namespace DuckyProfileSwitcher.ViewModels
         }
 
         public bool CanSwitchProfile => !IsBusy && IsConnected;
+
+        public bool CanSleep => !IsBusy && IsConnected;
 
         public bool IsRunning
         {
@@ -82,6 +85,8 @@ namespace DuckyProfileSwitcher.ViewModels
 
         public RelayCommand NextProfile { get; }
 
+        public RelayCommand Sleep { get; }
+
         public async void SetProfile(DuckyPadProfile profile)
         {
             await DuckyPadManager.Instance.SetProfile(profile);
@@ -98,6 +103,7 @@ namespace DuckyProfileSwitcher.ViewModels
         {
             PreviousProfile.RaiseCanExecuteChanged();
             NextProfile.RaiseCanExecuteChanged();
+            Sleep.RaiseCanExecuteChanged();
             HID.DuckyPadInfo? info = DuckyPadManager.Instance.Info;
             Device.Net.ConnectedDeviceDefinition? definition = DuckyPadManager.Instance.DeviceDefinition;
             DuckyPadDetails = info != null && definition != null

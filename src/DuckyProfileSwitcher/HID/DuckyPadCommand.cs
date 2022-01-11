@@ -53,5 +53,6 @@
         CreateDir = 0x12,
         DeleteDir = 0x13,
         Reset = 0x14,
+        Sleep = 0x15,
     }
 }

@@ -112,10 +112,10 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Button
+                    Command="{Binding Sleep}"
                     Margin="0,0,10,10"
                     Content="S_leep"
-                    IsEnabled="True"
-                    ToolTip="Not yet implemented" />
+                    ToolTip="Make duckyPad sleep" />
             </WrapPanel>
             <Rectangle
                 Grid.Row="3"
