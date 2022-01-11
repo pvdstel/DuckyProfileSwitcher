@@ -70,7 +70,13 @@ namespace DuckyProfileSwitcher.Views
             notifyIcon.Text = "duckyPad Profile Switcher";
             notifyIcon.Icon = new System.Drawing.Icon(iconStream);
             notifyIcon.Visible = ConfigurationManager.Configuration.ShowTrayIcon;
-            notifyIcon.Click += (sender, e) => Show();
+            notifyIcon.Click += (sender, e) =>
+            {
+                if (e is MouseEventArgs mouseEventArgs && mouseEventArgs.Button == MouseButtons.Left)
+                {
+                    Show();
+                }
+            };
             MenuItem runningToggle = new("Monitoring", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             MenuItem goToProfile = new("Go to", (s, e) => viewModel.IsRunning = !viewModel.IsRunning);
             MenuItem sleep = new("Sleep", (s, e) => viewModel.Sleep.Execute(new object()));
