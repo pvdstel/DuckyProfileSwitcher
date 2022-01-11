@@ -16,28 +16,6 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <WrapPanel Grid.Column="1" Orientation="Vertical">
-            <Button
-                Margin="10,0,0,10"
-                Command="{Binding AddRuleCommand}"
-                Content="_Add rule" />
-            <Button
-                Margin="10,0,0,10"
-                Command="{Binding EditSelectedRuleCommand}"
-                Content="_Edit rule" />
-            <Button
-                Margin="10,0,0,10"
-                Command="{Binding DeleteSelectedRuleCommand}"
-                Content="_Delete rule" />
-            <Button
-                Margin="10,0,0,10"
-                Command="{Binding MoveSelectedRuleUpCommand}"
-                Content="Move _up" />
-            <Button
-                Margin="10,0,0,10"
-                Command="{Binding MoveSelectedRuleDownCommand}"
-                Content="Mo_ve down" />
-        </WrapPanel>
         <ListView
             Background="Transparent"
             BorderBrush="{DynamicResource DividerFill}"
@@ -45,8 +23,8 @@
             ItemsSource="{Binding Rules}"
             SelectedItem="{Binding SelectedRule}">
             <ListView.Resources>
-                <Style BasedOn="{StaticResource MahApps.Styles.ListViewItem}" TargetType="ListViewItem">
-                    <EventSetter Event="MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
+                <Style BasedOn="{StaticResource MahApps.Styles.ListViewItem}" TargetType="{x:Type ListViewItem}">
+                    <EventSetter Event="Control.MouseDoubleClick" Handler="ListViewItem_MouseDoubleClick" />
                 </Style>
             </ListView.Resources>
             <ListView.View>
@@ -69,6 +47,27 @@
                 </GridView>
             </ListView.View>
         </ListView>
-
+        <WrapPanel Grid.Column="1" Orientation="Vertical">
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding AddRuleCommand}"
+                Content="_Add rule" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding EditSelectedRuleCommand}"
+                Content="_Edit rule" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding DeleteSelectedRuleCommand}"
+                Content="_Delete rule" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding MoveSelectedRuleUpCommand}"
+                Content="Move _up" />
+            <Button
+                Margin="10,0,0,10"
+                Command="{Binding MoveSelectedRuleDownCommand}"
+                Content="Mo_ve down" />
+        </WrapPanel>
     </Grid>
 </UserControl>
