@@ -9,6 +9,7 @@
     <LangVersion>9</LangVersion>
     <ApplicationIcon>Resources\small.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
