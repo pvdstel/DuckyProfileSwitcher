@@ -10,6 +10,9 @@
     <ApplicationIcon>Resources\small.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Version>0.2.0</Version>
+    <Company>pvdstel</Company>
+    <Description>An automatic profile switcher for duckyPad.</Description>
   </PropertyGroup>
 
   <ItemGroup>
