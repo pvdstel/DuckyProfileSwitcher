@@ -114,7 +114,7 @@
                 <Button
                     Command="{Binding Sleep}"
                     Margin="0,0,10,10"
-                    Content="S_leep"
+                    Content="Sl_eep"
                     ToolTip="Make duckyPad sleep" />
             </WrapPanel>
             <Rectangle
