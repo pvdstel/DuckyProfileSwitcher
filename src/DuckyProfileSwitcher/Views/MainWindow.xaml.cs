@@ -2,6 +2,7 @@
 using DuckyProfileSwitcher.ViewModels;
 using MahApps.Metro.Controls.Dialogs;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -195,7 +196,47 @@ namespace DuckyProfileSwitcher.Views
 
         private void OpenConfig_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(ConfigurationManager.ConfigurationFile);
+            string file = ConfigurationManager.ConfigurationFile;
+
+            if (!File.Exists(file))
+            {
+                this.ShowMessageAsync(
+                    "No configuration file found",
+                    $"The configuration file does not exist. A configuration file will automatically be created when settings change.\n\nFile: {file}",
+                    settings: new MetroDialogSettings
+                    {
+                        AnimateHide = false,
+                        AnimateShow = false,
+                    });
+                return;
+            }
+
+            try
+            {
+                System.Diagnostics.Process.Start(file);
+            }
+            catch (Win32Exception ex)
+            {
+                this.ShowMessageAsync(
+                    "System error",
+                    $"A system error occurred while opening the configuration file.\n\nFile: {file}\nMessage: {ex.Message}",
+                    settings: new MetroDialogSettings
+                    {
+                        AnimateHide = false,
+                        AnimateShow = false,
+                    });
+            }
+            catch (Exception ex)
+            {
+                this.ShowMessageAsync(
+                    "Unknown error",
+                    $"An unknown error occurred while opening the configuration file.\n\nFile: {file}\nMessage: {ex.Message}\nType: {ex.GetType().FullName}",
+                    settings: new MetroDialogSettings
+                    {
+                        AnimateHide = false,
+                        AnimateShow = false,
+                    });
+            }
         }
     }
 }
