@@ -107,7 +107,7 @@
                     SelectedItem="{Binding SelectedProfile}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:DuckyPadProfile}">
-                            <TextBlock Text="{Binding DisplayText}" />
+                            <TextBlock Text="{Binding DisplayText, Mode=OneTime}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
