@@ -20,11 +20,23 @@ namespace DuckyProfileSwitcher.Views
         private readonly MainWindowViewModel viewModel = new();
         private readonly NotifyIcon notifyIcon = new();
         private readonly HID.DeviceListener deviceListener = new();
+        private readonly string versionString;
         private bool allowClose = false;
         private CancellationTokenSource? closeDialogCancellation;
 
         public MainWindow()
         {
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            Version appVersion = assembly.GetName().Version;
+            if (assembly.GetCustomAttributes(false).OfType<System.Diagnostics.DebuggableAttribute>().Any(d => d.IsJITTrackingEnabled))
+            {
+                versionString = appVersion.ToString(3) + " (debug)";
+            }
+            else
+            {
+                versionString = appVersion.ToString(3);
+            }
+
             InitializeComponent();
             DataContext = viewModel;
 
@@ -46,6 +58,7 @@ namespace DuckyProfileSwitcher.Views
             HwndSource source = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
             source.AddHook(HwndHandler);
             deviceListener.RegisterDeviceNotification(source.Handle);
+            Title += ' ' + versionString;
         }
 
         private IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
